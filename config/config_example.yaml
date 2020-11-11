@@ -1,0 +1,14 @@
+server:
+  host: 0.0.0.0
+  port: 5000
+  debug: True
+logging:
+  location: logs/tasker.log
+  level: DEBUG
+database:
+  type:
+  database:
+  host:
+  port:
+  username:
+  password:
