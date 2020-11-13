@@ -8,11 +8,14 @@ import os
 import shutil
 import json_log_formatter
 from flask import Blueprint, request, jsonify, Flask, render_template
+from datetime import datetime
 from .http_helpers import return_response
 from .sql_helpers import add_task_type
 from .sql_helpers import get_task_type
 from .sql_helpers import delete_task_type
-
+from .sql_helpers import add_task
+from .sql_helpers import get_task
+from .sql_helpers import delete_task
 
 # Load configuration file
 with open("config/config.yaml", mode="r") as f:
@@ -53,10 +56,10 @@ def tasks_type_route(type_id=None):
 
     Params:
         A JSON request body handled by flask which may include:
-            name: The name of the task (String)
-            target: The type of target for a task, ie agent. (String)
-            version: The version number for a task (Float)
-            bin.name: The name of the bin for this task (String)
+            name: The name of the task type (String)
+            target: The type of target for this task type, ie agent. (String)
+            version: The version number for this task type (Float)
+            bin.name: The name of the bin for this task type (String)
             bin.content: The base64 encoded content of the task type script (String)
             track_progress: Should this task type track progress (Boolean)
 
@@ -125,7 +128,7 @@ def tasks_type_route(type_id=None):
                     tmp_data["track_progress"] = row[6]
                     data.append(tmp_data)
                 
-                return return_response(200, "Successfully returned task all types", True, None, data, 200)
+                return return_response(200, "Successfully returned all task types", True, None, data, 200)
 
             else:
 
@@ -234,7 +237,7 @@ def tasks_type_route(type_id=None):
 
                     data = []
 
-                    # For every task in the databse with that ID, delete the file and delete from the db
+                    # For every task type in the databse with that ID, delete the file and delete from the db
                     for row in query_results:
                         tmp_data = {}   
                         tmp_data["id"] = row[0]
@@ -267,8 +270,248 @@ def tasks_type_download_route():
     data['ping'] = "Pong!"
     return return_response(0, "Pong!", True, None, data, 200)
 
-@bp_api_tasks.route("/task", methods=["GET", "POST"])
-def tasks_task_route():
-    data = {}
-    data['ping'] = "Pong!"
-    return return_response(0, "Pong!", True, None, data, 200)
+
+
+
+
+
+
+
+
+
+@bp_api_tasks.route("/task/<task_id>", methods=["GET"])
+@bp_api_tasks.route("/task", methods=["GET", "PUT", "DELETE"])
+def tasks_task_route(task_id=None):
+    """This flask def is used to manage tasks. Including getting info on a task , adding a new task  and deleting a task.
+
+    Params:
+        A JSON request body handled by flask which may include:
+            task.type: The type of task to create, must by a vaid task type.
+            target.agent: The agent name to run this task on
+            expiration.datet this task to expire, provided as a UTC timestamp as an integer
+            parameters: A dictionary of paramaters to pass to the task.
+
+    Returns:
+        A JSON formatting string of task related information.
+    """
+    # Check the request is json.
+    if request.method != "GET":
+        if request.is_json:
+            request_json = request.get_json()
+        else:
+            data = {}
+            return return_response(406, "Request is not JSON", True, None, data, 406)
+
+    # Get a task via GET method
+    if request.method == "GET":
+        if task_id != None:
+            logger.debug('A task ID has been provided', extra={'task_id':task_id})
+
+            query_results = get_task(str(task_id))
+
+            if len(query_results ) > 1:
+                logger.error('Dupicate task ID found in database', extra={'query_results':query_results, 'task_id':task_id})
+                return return_response(502, "Duplicate results for that ID", True, None, data, 502)
+
+            elif len(query_results) > 0:
+
+                data = []
+
+                for row in query_results:
+                        tmp_data = {}
+                        tmp_data['task'] = {}
+                        tmp_data['task']['id'] = row[0]
+                        tmp_data['task']['type'] = row[1]
+                        tmp_data['target'] = {}
+                        tmp_data['target']['agent'] = row[2]
+                        tmp_data['expiration'] = {}
+                        if str(row[3]).lower() == "false":
+                            tmp_data['expiration']['expired'] = False
+                        else:
+                            tmp_data['expiration']['expired'] = True
+                        tmp_data['expiration']['datetime'] = row[4]
+                        tmp_data['status'] = {}
+                        tmp_data['status']['status'] = row[5]
+                        tmp_data['status']['percentage'] = row[6]
+                        if str(row[7]).lower() == "false":
+                            tmp_data['status']['timeout'] = False
+                        else:
+                            tmp_data['status']['timeout'] = True
+                        #tmp_data['parameters'] = json.loads(row[8])
+                        tmp_data['parameters'] = json.loads(str(row[8]).replace("'", '"'))
+                        if "response" in tmp_data:
+                            tmp_data['response'] = son.loads(str(row[9]).replace("'", '"'))
+                        data.append(tmp_data)
+                
+                return return_response(200, "Successfully returned task", True, None, data, 200)
+            
+            else:
+
+                data = {}
+                return return_response(404, "No results found for that ID", True, None, data, 404)
+        
+        else:
+
+            logger.debug('No task ID has been provided, getting all tasks', extra={'task_id':task_id})
+
+            query_results = get_task(None)
+
+            if len(query_results) > 0:
+
+                data = []
+
+                for row in query_results:
+                        tmp_data = {}
+                        tmp_data['task'] = {}
+                        tmp_data['task']['id'] = row[0]
+                        tmp_data['task']['type'] = row[1]
+                        tmp_data['target'] = {}
+                        tmp_data['target']['agent'] = row[2]
+                        tmp_data['expiration'] = {}
+                        if str(row[3]).lower() == "false":
+                            tmp_data['expiration']['expired'] = False
+                        else:
+                            tmp_data['expiration']['expired'] = True
+                        tmp_data['expiration']['datetime'] = row[4]
+                        tmp_data['status'] = {}
+                        tmp_data['status']['status'] = row[5]
+                        tmp_data['status']['percentage'] = row[6]
+                        if str(row[7]).lower() == "false":
+                            tmp_data['status']['timeout'] = False
+                        else:
+                            tmp_data['status']['timeout'] = True
+                        #tmp_data['parameters'] = json.loads(row[8])
+                        tmp_data['parameters'] = json.loads(str(row[8]).replace("'", '"'))
+                        if "response" in tmp_data:
+                            tmp_data['response'] = son.loads(str(row[9]).replace("'", '"'))
+                        data.append(tmp_data)
+                
+                return return_response(200, "Successfully returned all tasks", True, None, data, 200)
+
+            else:
+
+                data = {}
+
+                return return_response(404, "No tasks found", True, None, data, 404)
+
+    # Adding a new task via PUT method
+    elif request.method == "PUT":
+
+        if ("task" in request_json) and ("target" in request_json) and ("parameters" in request_json) and ("type" in request_json['task']) and ("agent" in request_json['target']) and ("timestamp" in request_json['expiration']):
+
+            logger.debug('Adding new task', extra={'request_json':request_json})
+            
+            # Copy request_json to task_request so we can properly set the timestamp to a pythonic timestamp
+            task_request = request_json
+            task_request['expiration']['timestamp'] = datetime.fromtimestamp(request_json['expiration']['timestamp'])
+
+            task_id = add_task(task_request)
+
+            if task_id != None:
+
+                query_results = get_task(str(task_id))
+
+                if len(query_results ) > 1:
+                    logger.error('Dupicate task ID found in database', extra={'query_results':query_results, 'task_id':task_id})
+                    return return_response(502, "Duplicate results for that ID", True, None, data, 502)
+
+                elif len(query_results) > 0:
+
+                    data = []
+
+                    for row in query_results:
+                        tmp_data = {}
+                        tmp_data['task'] = {}
+                        tmp_data['task']['id'] = row[0]
+                        tmp_data['task']['type'] = row[1]
+                        tmp_data['target'] = {}
+                        tmp_data['target']['agent'] = row[2]
+                        tmp_data['expiration'] = {}
+                        if str(row[3]).lower() == "false":
+                            tmp_data['expiration']['expired'] = False
+                        else:
+                            tmp_data['expiration']['expired'] = True
+                        tmp_data['expiration']['datetime'] = row[4]
+                        tmp_data['status'] = {}
+                        tmp_data['status']['status'] = row[5]
+                        tmp_data['status']['percentage'] = row[6]
+                        if str(row[7]).lower() == "false":
+                            tmp_data['status']['timeout'] = False
+                        else:
+                            tmp_data['status']['timeout'] = True
+                        #tmp_data['parameters'] = json.loads(row[8])
+                        tmp_data['parameters'] = json.loads(str(row[8]).replace("'", '"'))
+                        if "response" in tmp_data:
+                            tmp_data['response'] = son.loads(str(row[9]).replace("'", '"'))
+                        data.append(tmp_data)
+
+                    return return_response(201, "Added task successfully", True, None, data, 201)
+            else:
+                data = task_info
+                return return_response(502, "Unable to add task due to an internal error", True, None, data, 502)
+
+        else:
+            data = {}
+            data['keys'] = []
+            for key in request_json.keys():
+                data['keys'].append(key)
+
+            return return_response(406, "Request does not contain all the required keys", True, None, data, 406)
+
+    # Delete task types
+    elif request.method == "DELETE":
+
+        if ("id" in request_json):
+
+            if request_json['id'] == "all":
+                if ("confirm" in request_json) and (request_json['confirm'] == True):
+
+                    delete_task(None)
+                    data = []
+                    data.append(str(request_json['id']))
+
+                    return return_response(200, "All tasks deleted successfully", True, None, data, 200)
+
+                else:
+                    return return_response(406, "You requested to delete all tasks, but did not specify confirm.", True, None, data, 406)
+            else:
+
+                query_results = get_task(str(request_json['id']))
+
+                if len(query_results ) > 1:
+                    logger.error('Dupicate task ID found in database, deleting all results', extra={'query_results':query_results, 'task_id':request_json['id']})
+
+                elif len(query_results) > 0:
+
+                    data = []
+
+                    # For every task in the databse with that ID, delete the file and delete from the db
+                    for row in query_results:
+                        tmp_data = {}
+                        tmp_data['task'] = {}
+                        tmp_data['task']['id'] = row[0]
+                        tmp_data['task']['type'] = row[1]
+                        tmp_data['target'] = {}
+                        tmp_data['target']['agent'] = row[2]
+                        tmp_data['expiration'] = {}
+                        if str(row[3]).lower() == "false":
+                            tmp_data['expiration']['expired'] = False
+                        else:
+                            tmp_data['expiration']['expired'] = True
+                        tmp_data['expiration']['datetime'] = row[4]
+                        tmp_data['status'] = {}
+                        tmp_data['status']['status'] = row[5]
+                        tmp_data['status']['percentage'] = row[6]
+                        if str(row[7]).lower() == "false":
+                            tmp_data['status']['timeout'] = False
+                        else:
+                            tmp_data['status']['timeout'] = True
+                        #tmp_data['parameters'] = json.loads(row[8])
+                        tmp_data['parameters'] = json.loads(str(row[8]).replace("'", '"'))
+                        if "response" in tmp_data:
+                            tmp_data['response'] = son.loads(str(row[9]).replace("'", '"'))
+                        data.append(tmp_data)
+                    
+                        delete_task_type(request_json['id'])
+                        
+                    return return_response(200, "Task deleted successfully", True, None, data, 200)

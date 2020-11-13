@@ -25,7 +25,7 @@ engine = create_engine(engine.url.make_url(engine_url))
 metadata = MetaData()
 db_tasks_types = Table('types', metadata,
     Column('id', String(16), primary_key=True),
-    Column('type', String(255)),
+    Column('name', String(255)),
     Column('target', String(255)),
     Column('version', Float(12)),
     Column('bin', String(255)),
@@ -33,15 +33,15 @@ db_tasks_types = Table('types', metadata,
     Column('track_progress', String(255)),
 )
 db_tasks = Table('tasks', metadata,
-    Column('task_id', String(16), primary_key=True),
+    Column('id', String(16), primary_key=True),
     Column('task_type', String(255)),
     Column('target_agent', String(255)),
     Column('expiration_expired', String(255)),
     Column('expiration_datetime', TIMESTAMP),
     Column('status_status', String(255)),
-    Column('status_percentage', String(255)),
+    Column('status_percentage', Integer),
     Column('status_timeout', String(255)),
-    Column('paramaters_json', Text),
+    Column('parameters_json', Text),
     Column('response_json', Text),
 )
 def id_generator(size=16, chars=string.ascii_uppercase + string.digits):
@@ -56,25 +56,25 @@ def id_generator(size=16, chars=string.ascii_uppercase + string.digits):
     """
     return str(''.join(random.choice(chars) for x in range(size)))
 
-def add_task_type(task_info):
+def add_task_type(type_info):
 
-    task_id = id_generator()
+    type_id = id_generator()
 
     statement = db_tasks_types.insert().values(
-        id=str(task_id),
-        name=str(task_info['name']),
-        target=str(task_info['target']),
-        version=float(task_info['version']),
-        bin=str(task_info['bin']['name']),
-        shasum=str(task_info['shasum']),
-        track_progress=str(task_info['track_progress'])
+        id=str(type_id),
+        name=str(type_info['name']),
+        target=str(type_info['target']),
+        version=float(type_info['version']),
+        bin=str(type_info['bin']['name']),
+        shasum=str(type_info['shasum']),
+        track_progress=str(type_info['track_progress'])
         )
 
     logger.debug('Executing SQL', extra={'statement': statement})
     with engine.begin() as conn:
         conn.execute(statement)
 
-    return task_id
+    return type_id
 
 def get_task_type(type_id):
 
@@ -104,6 +104,61 @@ def delete_task_type(type_id):
 
     logger.debug('Executing SQL', extra={'statement': statement})
     with engine.begin() as conn:
-        query_results = conn.execute(statement)
+        conn.execute(statement)
+
+    return True
+
+def add_task(task_info):
+
+    task_id = id_generator()
+
+    statement = db_tasks.insert().values(
+        id=str(task_id),
+        task_type=str(task_info['task']['type']),
+        target_agent=str(task_info['target']['agent']),
+        expiration_expired=str("False"),
+        expiration_datetime=task_info['expiration']['timestamp'],
+        status_status=str("pending"),
+        status_percentage=int(0),
+        status_timeout=str("False"),
+        parameters_json=str(task_info['parameters']),
+        response_json=None,
+        )
+
+    logger.debug('Executing SQL', extra={'statement': statement})
+    with engine.begin() as conn:
+        conn.execute(statement)
+
+    return task_id
+
+def get_task(type_id):
+
+    if type_id  != None:
+        statement = db_tasks.select().where(
+            db_tasks.c.id == str(type_id)
+            )
+    else:
+        statement = db_tasks.select()
+
+    query_results = None
+
+    logger.debug('Executing SQL', extra={'statement': statement})
+    with engine.begin() as conn:
+        query_results = conn.execute(statement).fetchall()
+
+    return query_results
+
+def delete_task(type_id):
+
+    if type_id  != None:
+        statement = db_tasks.delete().where(
+            db_tasks.c.id == str(type_id)
+            )
+    else:
+        statement = db_tasks.delete()
+
+    logger.debug('Executing SQL', extra={'statement': statement})
+    with engine.begin() as conn:
+        conn.execute(statement)
 
     return True
