@@ -309,45 +309,14 @@ def tasks_task_route(task_id=None):
 
             query_results = get_task(str(task_id))
 
-            if len(query_results ) > 1:
-                logger.error('Dupicate task ID found in database', extra={'query_results':query_results, 'task_id':task_id})
-                return return_response(502, "Duplicate results for that ID", True, None, data, 502)
-
-            elif len(query_results) > 0:
-
+            if query_results == False:
                 data = []
-
-                for row in query_results:
-                        tmp_data = {}
-                        tmp_data['task'] = {}
-                        tmp_data['task']['id'] = row[0]
-                        tmp_data['task']['type'] = row[1]
-                        tmp_data['target'] = {}
-                        tmp_data['target']['agent'] = row[2]
-                        tmp_data['expiration'] = {}
-                        if str(row[3]).lower() == "false":
-                            tmp_data['expiration']['expired'] = False
-                        else:
-                            tmp_data['expiration']['expired'] = True
-                        tmp_data['expiration']['datetime'] = row[4]
-                        tmp_data['status'] = {}
-                        tmp_data['status']['status'] = row[5]
-                        tmp_data['status']['percentage'] = row[6]
-                        if str(row[7]).lower() == "false":
-                            tmp_data['status']['timeout'] = False
-                        else:
-                            tmp_data['status']['timeout'] = True
-                        #tmp_data['parameters'] = json.loads(row[8])
-                        tmp_data['parameters'] = json.loads(str(row[8]).replace("'", '"'))
-                        if "response" in tmp_data:
-                            tmp_data['response'] = son.loads(str(row[9]).replace("'", '"'))
-                        data.append(tmp_data)
-                
+                return return_response(502, "There was an error during the query", True, None, data, 502)
+            elif len(query_results) > 0:
+                data = query_results
                 return return_response(200, "Successfully returned task", True, None, data, 200)
-            
             else:
-
-                data = {}
+                data =[]
                 return return_response(404, "No results found for that ID", True, None, data, 404)
         
         else:
@@ -356,42 +325,14 @@ def tasks_task_route(task_id=None):
 
             query_results = get_task(None)
 
-            if len(query_results) > 0:
-
+            if query_results == False:
                 data = []
-
-                for row in query_results:
-                        tmp_data = {}
-                        tmp_data['task'] = {}
-                        tmp_data['task']['id'] = row[0]
-                        tmp_data['task']['type'] = row[1]
-                        tmp_data['target'] = {}
-                        tmp_data['target']['agent'] = row[2]
-                        tmp_data['expiration'] = {}
-                        if str(row[3]).lower() == "false":
-                            tmp_data['expiration']['expired'] = False
-                        else:
-                            tmp_data['expiration']['expired'] = True
-                        tmp_data['expiration']['datetime'] = row[4]
-                        tmp_data['status'] = {}
-                        tmp_data['status']['status'] = row[5]
-                        tmp_data['status']['percentage'] = row[6]
-                        if str(row[7]).lower() == "false":
-                            tmp_data['status']['timeout'] = False
-                        else:
-                            tmp_data['status']['timeout'] = True
-                        #tmp_data['parameters'] = json.loads(row[8])
-                        tmp_data['parameters'] = json.loads(str(row[8]).replace("'", '"'))
-                        if "response" in tmp_data:
-                            tmp_data['response'] = son.loads(str(row[9]).replace("'", '"'))
-                        data.append(tmp_data)
-                
+                return return_response(502, "There was an error during the query", True, None, data, 502)
+            elif len(query_results) > 0:
+                data = query_results
                 return return_response(200, "Successfully returned all tasks", True, None, data, 200)
-
             else:
-
-                data = {}
-
+                data =[]
                 return return_response(404, "No tasks found", True, None, data, 404)
 
     # Adding a new task via PUT method
@@ -406,48 +347,24 @@ def tasks_task_route(task_id=None):
             task_request['expiration']['timestamp'] = datetime.fromtimestamp(request_json['expiration']['timestamp'])
 
             task_id = add_task(task_request)
+            logger.debug("Added a new task to the DB", extra={'task_id':task_id})
 
             if task_id != None:
 
                 query_results = get_task(str(task_id))
 
-                if len(query_results ) > 1:
-                    logger.error('Dupicate task ID found in database', extra={'query_results':query_results, 'task_id':task_id})
-                    return return_response(502, "Duplicate results for that ID", True, None, data, 502)
-
-                elif len(query_results) > 0:
-
+                if query_results == False:
                     data = []
-
-                    for row in query_results:
-                        tmp_data = {}
-                        tmp_data['task'] = {}
-                        tmp_data['task']['id'] = row[0]
-                        tmp_data['task']['type'] = row[1]
-                        tmp_data['target'] = {}
-                        tmp_data['target']['agent'] = row[2]
-                        tmp_data['expiration'] = {}
-                        if str(row[3]).lower() == "false":
-                            tmp_data['expiration']['expired'] = False
-                        else:
-                            tmp_data['expiration']['expired'] = True
-                        tmp_data['expiration']['datetime'] = row[4]
-                        tmp_data['status'] = {}
-                        tmp_data['status']['status'] = row[5]
-                        tmp_data['status']['percentage'] = row[6]
-                        if str(row[7]).lower() == "false":
-                            tmp_data['status']['timeout'] = False
-                        else:
-                            tmp_data['status']['timeout'] = True
-                        #tmp_data['parameters'] = json.loads(row[8])
-                        tmp_data['parameters'] = json.loads(str(row[8]).replace("'", '"'))
-                        if "response" in tmp_data:
-                            tmp_data['response'] = son.loads(str(row[9]).replace("'", '"'))
-                        data.append(tmp_data)
-
+                    return return_response(502, "There was an error during the query", True, None, data, 502)
+                elif len(query_results) > 0:
+                    data = query_results
                     return return_response(201, "Added task successfully", True, None, data, 201)
+                else:
+                    data =[]
+                    logger.error("No tasks returned from DB for a ID that was just added", extra={'task_id':task_id, 'query_results':query_results})
+                    return return_response(404, "Unable to add task due to an internal error", True, None, data, 404)
             else:
-                data = task_info
+                data = task_request
                 return return_response(502, "Unable to add task due to an internal error", True, None, data, 502)
 
         else:
@@ -466,10 +383,20 @@ def tasks_task_route(task_id=None):
             if request_json['id'] == "all":
                 if ("confirm" in request_json) and (request_json['confirm'] == True):
 
-                    delete_task(None)
-                    data = []
-                    data.append(str(request_json['id']))
+                    query_results = get_task(None)
 
+                    if query_results == False:
+                        data = []
+                        return return_response(502, "There was an error during the query", True, None, data, 502)
+                    elif len(query_results) == 0:
+                        data = []
+                        logger.debug("No tasks to delete", extra={'task_id':request_json['id'], 'query_results':query_results})
+                        return return_response(200, "No tasks to delete", True, None, data, 200)
+                    else:
+                        
+                        delete_task(None)
+                    
+                    data = query_results
                     return return_response(200, "All tasks deleted successfully", True, None, data, 200)
 
                 else:
@@ -478,40 +405,17 @@ def tasks_task_route(task_id=None):
 
                 query_results = get_task(str(request_json['id']))
 
-                if len(query_results ) > 1:
-                    logger.error('Dupicate task ID found in database, deleting all results', extra={'query_results':query_results, 'task_id':request_json['id']})
-
-                elif len(query_results) > 0:
-
+                if query_results == False:
                     data = []
-
-                    # For every task in the databse with that ID, delete the file and delete from the db
-                    for row in query_results:
-                        tmp_data = {}
-                        tmp_data['task'] = {}
-                        tmp_data['task']['id'] = row[0]
-                        tmp_data['task']['type'] = row[1]
-                        tmp_data['target'] = {}
-                        tmp_data['target']['agent'] = row[2]
-                        tmp_data['expiration'] = {}
-                        if str(row[3]).lower() == "false":
-                            tmp_data['expiration']['expired'] = False
-                        else:
-                            tmp_data['expiration']['expired'] = True
-                        tmp_data['expiration']['datetime'] = row[4]
-                        tmp_data['status'] = {}
-                        tmp_data['status']['status'] = row[5]
-                        tmp_data['status']['percentage'] = row[6]
-                        if str(row[7]).lower() == "false":
-                            tmp_data['status']['timeout'] = False
-                        else:
-                            tmp_data['status']['timeout'] = True
-                        #tmp_data['parameters'] = json.loads(row[8])
-                        tmp_data['parameters'] = json.loads(str(row[8]).replace("'", '"'))
-                        if "response" in tmp_data:
-                            tmp_data['response'] = son.loads(str(row[9]).replace("'", '"'))
-                        data.append(tmp_data)
+                    return return_response(502, "There was an error during the query", True, None, data, 502)
+                elif len(query_results) == 0:
+                    data = []
+                    logger.error("No task found for that ID", extra={'task_id':request_json['id'], 'query_results':query_results})
+                    return return_response(404, "No task found for that ID", True, None, data, 404)
+                else:
                     
-                        delete_task_type(request_json['id'])
+                    for result in query_results:
+                        delete_task(result['task']['id'])
                         
+                    data = query_results
                     return return_response(200, "Task deleted successfully", True, None, data, 200)

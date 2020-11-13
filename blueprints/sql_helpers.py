@@ -131,11 +131,11 @@ def add_task(task_info):
 
     return task_id
 
-def get_task(type_id):
+def get_task(task_id):
 
-    if type_id  != None:
+    if task_id  != None:
         statement = db_tasks.select().where(
-            db_tasks.c.id == str(type_id)
+            db_tasks.c.id == str(task_id)
             )
     else:
         statement = db_tasks.select()
@@ -146,7 +146,47 @@ def get_task(type_id):
     with engine.begin() as conn:
         query_results = conn.execute(statement).fetchall()
 
-    return query_results
+
+    if task_id != None and len(query_results ) > 1:
+        logger.error('Dupicate task ID found in database', extra={'query_results':query_results, 'task_id':task_id})
+        return False
+
+    elif len(query_results) > 0:
+        logger.debug('Found result in DB', extra={'query_results':query_results, 'task_id':task_id})
+
+        data = []
+
+        for row in query_results:
+                tmp_data = {}
+                tmp_data['task'] = {}
+                tmp_data['task']['id'] = row[0]
+                tmp_data['task']['type'] = row[1]
+                tmp_data['target'] = {}
+                tmp_data['target']['agent'] = row[2]
+                tmp_data['expiration'] = {}
+                if str(row[3]).lower() == "false":
+                    tmp_data['expiration']['expired'] = False
+                else:
+                    tmp_data['expiration']['expired'] = True
+                tmp_data['expiration']['datetime'] = row[4]
+                tmp_data['status'] = {}
+                tmp_data['status']['status'] = row[5]
+                tmp_data['status']['percentage'] = row[6]
+                if str(row[7]).lower() == "false":
+                    tmp_data['status']['timeout'] = False
+                else:
+                    tmp_data['status']['timeout'] = True
+                #tmp_data['parameters'] = json.loads(row[8])
+                tmp_data['parameters'] = json.loads(str(row[8]).replace("'", '"'))
+                if "response" in tmp_data:
+                    tmp_data['response'] = json.loads(str(row[9]).replace("'", '"'))
+                data.append(tmp_data)
+        
+    else:
+        data = []
+
+    logger.debug('Returning results', extra={'data':data, 'task_id':task_id})
+    return data
 
 def delete_task(type_id):
 
