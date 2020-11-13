@@ -2,7 +2,8 @@ import random
 import string
 import logging
 import json_log_formatter
-from sqlalchemy import engine, create_engine, MetaData, Table, Column, Integer, Text, String, Float, select, TIMESTAMP
+from sqlalchemy import engine, create_engine, MetaData, Table, Column, Integer, select, update, Text, String, Float, TIMESTAMP
+from datetime import datetime
 import json
 import yaml
 
@@ -131,6 +132,31 @@ def add_task(task_info):
 
     return task_id
 
+def update_task(task_info):
+
+    if "response" not in task_info:
+        task_info['response'] = None
+
+    statement = db_tasks.update().where(
+        db_tasks.c.id==str(task_info['task']['id'])
+        ).values(
+            task_type=str(task_info['task']['type']),
+            target_agent=str(task_info['target']['agent']),
+            expiration_expired=str(task_info['expiration']['expired']),
+            expiration_datetime=task_info['expiration']['timestamp'],
+            status_status=str(task_info['status']['status']),
+            status_percentage=int(task_info['status']['percentage']),
+            status_timeout=str(task_info['status']['timeout']),
+            parameters_json=str(task_info['parameters']),
+            response_json=task_info['response'],
+        )
+
+    logger.debug('Executing SQL', extra={'statement': statement})
+    with engine.begin() as conn:
+        conn.execute(statement)
+
+    return True
+
 def get_task(task_id):
 
     if task_id  != None:
@@ -168,7 +194,7 @@ def get_task(task_id):
                     tmp_data['expiration']['expired'] = False
                 else:
                     tmp_data['expiration']['expired'] = True
-                tmp_data['expiration']['datetime'] = row[4]
+                tmp_data['expiration']['timestamp'] = datetime.timestamp(row[4])
                 tmp_data['status'] = {}
                 tmp_data['status']['status'] = row[5]
                 tmp_data['status']['percentage'] = row[6]
@@ -178,7 +204,7 @@ def get_task(task_id):
                     tmp_data['status']['timeout'] = True
                 #tmp_data['parameters'] = json.loads(row[8])
                 tmp_data['parameters'] = json.loads(str(row[8]).replace("'", '"'))
-                if "response" in tmp_data:
+                if row[9]:
                     tmp_data['response'] = json.loads(str(row[9]).replace("'", '"'))
                 data.append(tmp_data)
         

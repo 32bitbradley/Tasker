@@ -14,6 +14,7 @@ from .sql_helpers import add_task_type
 from .sql_helpers import get_task_type
 from .sql_helpers import delete_task_type
 from .sql_helpers import add_task
+from .sql_helpers import update_task
 from .sql_helpers import get_task
 from .sql_helpers import delete_task
 
@@ -280,7 +281,7 @@ def tasks_type_download_route():
 
 
 @bp_api_tasks.route("/task/<task_id>", methods=["GET"])
-@bp_api_tasks.route("/task", methods=["GET", "PUT", "DELETE"])
+@bp_api_tasks.route("/task", methods=["GET", "PUT", "PATCH", "DELETE"])
 def tasks_task_route(task_id=None):
     """This flask def is used to manage tasks. Including getting info on a task , adding a new task  and deleting a task.
 
@@ -366,6 +367,59 @@ def tasks_task_route(task_id=None):
             else:
                 data = task_request
                 return return_response(502, "Unable to add task due to an internal error", True, None, data, 502)
+
+        else:
+            data = {}
+            data['keys'] = []
+            for key in request_json.keys():
+                data['keys'].append(key)
+
+            return return_response(406, "Request does not contain all the required keys", True, None, data, 406)
+
+    # Adding a new task via PUT method
+    elif request.method == "PATCH":
+
+        # Checking required keys (All must be provided for a PATCH, as the sender should have all the data anyway from a previous GET)
+        if ("task" in request_json) and \
+            ("id" in request_json['task']) and \
+            ("type" in request_json['task']) and \
+            ("target" in request_json) and \
+            ("agent" in request_json['target']) and \
+            ("status" in request_json) and \
+            ("status" in request_json['status']) and \
+            ("percentage" in request_json['status']) and \
+            ("timeout" in request_json['status']) and \
+            ("expiration" in request_json) and \
+            ("expired" in request_json['expiration']) and \
+            ("timestamp" in request_json['expiration']) and \
+            ("parameters" in request_json):
+
+            logger.debug('Updating task', extra={'request_json':request_json})
+            
+            # Copy request_json to task_request so we can properly set the timestamp to a pythonic timestamp
+            task_request = request_json
+            task_request['expiration']['timestamp'] = datetime.fromtimestamp(request_json['expiration']['timestamp'])
+
+            task_id = update_task(task_request)
+            logger.debug("Updated task in the DB", extra={'task_id':task_id})
+
+            if task_id != None:
+
+                query_results = get_task(str(task_request['task']['id']))
+
+                if query_results == False:
+                    data = []
+                    return return_response(502, "There was an error during the query", True, None, data, 502)
+                elif len(query_results) > 0:
+                    data = query_results
+                    return return_response(201, "Updated task successfully", True, None, data, 201)
+                else:
+                    data =[]
+                    logger.error("No tasks returned from DB for a ID that was just added", extra={'task_id':task_id, 'query_results':query_results})
+                    return return_response(404, "Unable to update task due to an internal error", True, None, data, 404)
+            else:
+                data = task_request
+                return return_response(502, "Unable to update task due to an internal error", True, None, data, 502)
 
         else:
             data = {}
