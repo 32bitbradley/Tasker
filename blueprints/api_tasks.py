@@ -7,7 +7,7 @@ import os.path
 import os
 import shutil
 import json_log_formatter
-from flask import Blueprint, request, jsonify, Flask, render_template
+from flask import Blueprint, request, jsonify, Flask, render_template, send_file
 from datetime import datetime
 from .http_helpers import return_response
 from .sql_helpers import add_task_type
@@ -73,7 +73,7 @@ def tasks_type_route(type_id=None):
             request_json = request.get_json()
         else:
             data = {}
-            return return_response(406, "Request is not JSON", True, None, data, 406)
+            return return_response(406, "Request is not JSON", False, None, data, 406)
 
     # Get a task type via GET method
     if request.method == "GET":
@@ -84,7 +84,7 @@ def tasks_type_route(type_id=None):
 
             if len(query_results ) > 1:
                 logger.error('Dupicate task type ID found in database', extra={'query_results':query_results, 'type_id':type_id})
-                return return_response(502, "Duplicate results for that ID", True, None, data, 502)
+                return return_response(502, "Duplicate results for that ID", False, None, data, 502)
 
             elif len(query_results) > 0:
 
@@ -106,8 +106,7 @@ def tasks_type_route(type_id=None):
             else:
 
                 data = {}
-                return return_response(404, "No results found for that ID", True, None, data, 404)
-        
+                return return_response(404, "No results found for that ID", False, None, data, 404)
         else:
 
             logger.debug('No task type ID has been provided, getting all task types', extra={'type_id':type_id})
@@ -135,7 +134,7 @@ def tasks_type_route(type_id=None):
 
                 data = {}
 
-                return return_response(404, "No task types found", True, None, data, 404)
+                return return_response(404, "No task types found", False, None, data, 404)
 
     # Adding a new task via PUT method
     elif request.method == "PUT":
@@ -163,10 +162,10 @@ def tasks_type_route(type_id=None):
                     else:
                         logger.debug('Provide content is not base64 decodable', extra={'bin':task_type['bin']['name']})
                         data = {}
-                        return return_response(406, "The provided bin content is not base64 decodable", True, None, data, 406)
+                        return return_response(406, "The provided bin content is not base64 decodable", False, None, data, 406)
                 else:
                     data = {}
-                    return return_response(406, "The provided bin does not exist on the manager, and no bin content was provided", True, None, data, 406)
+                    return return_response(406, "The provided bin does not exist on the manager, and no bin content was provided", False, None, data, 406)
 
             # Generate SHA256 sum for the bin file
             logger.debug('Generating SHA256 hash for bin', extra={'bin':task_type['bin']['name']})
@@ -189,12 +188,12 @@ def tasks_type_route(type_id=None):
                 return return_response(201, "Added request type successfully", True, None, data, 201)
             else:
                 data = task_type
-                return return_response(502, "Unable to add task type due to an internal error", True, None, data, 502)
+                return return_response(502, "Unable to add task type due to an internal error", False, None, data, 502)
 
         else:
             data = {}
             data['keys'] = request_json.keys()
-            return return_response(406, "Request does not contain all the required keys", True, None, data, 406)
+            return return_response(406, "Request does not contain all the required keys", False, None, data, 406)
 
     # Delete task types
     elif request.method == "DELETE":
@@ -226,7 +225,7 @@ def tasks_type_route(type_id=None):
                     return return_response(200, "All task types deleted successfully", True, None, data, 200)
 
                 else:
-                    return return_response(406, "You requested to delete all task types, but did not specify confirm.", True, None, data, 406)
+                    return return_response(406, "You requested to delete all task types, but did not specify confirm.", False, None, data, 406)
             else:
 
                 query_results = get_task_type(str(type_id))
@@ -260,24 +259,33 @@ def tasks_type_route(type_id=None):
                         
                     return return_response(200, "Task type deleted successfully", True, None, data, 200)
 
-@bp_api_tasks.route("/type/download/<id>", methods=["GET"])
-def tasks_type_download_route():
+@bp_api_tasks.route("/type/download/<type_id>", methods=["GET"])
+def tasks_type_download_route(type_id=None):
     """This flask def is used to downloads a script for a given task type ID.
 
     Params:
         id: The task type ID to download, specific as a URL location
     """
-    data = {}
-    data['ping'] = "Pong!"
-    return return_response(0, "Pong!", True, None, data, 200)
+    bin_directory = "data/task_bin/"
 
+    if type_id != None:
+        logger.debug('A task type ID has been provided to download', extra={'type_id':type_id})
 
+        query_results = get_task_type(str(type_id))
 
+        if len(query_results ) > 1:
+            logger.error('Dupicate task type ID found in database', extra={'query_results':query_results, 'type_id':type_id})
+            data = []
+            return return_response(502, "Duplicate results for that ID", False, None, data, 502)
 
-
-
-
-
+        elif len(query_results) > 0:
+            data = query_results[0]
+            return send_from_directory(directory=bin_directory, filename=str(data[4]), as_attachment=True)
+        else:
+            data = []
+            return return_response(404, "No task type found for that ID", False, None, data, 404)
+    else:
+        return return_response(406, "You did not specify a task type to download", False, None, data, 406)
 
 
 @bp_api_tasks.route("/task/<task_id>", methods=["GET"])
@@ -301,7 +309,7 @@ def tasks_task_route(task_id=None):
             request_json = request.get_json()
         else:
             data = {}
-            return return_response(406, "Request is not JSON", True, None, data, 406)
+            return return_response(406, "Request is not JSON", False, None, data, 406)
 
     # Get a task via GET method
     if request.method == "GET":
@@ -312,13 +320,13 @@ def tasks_task_route(task_id=None):
 
             if query_results == False:
                 data = []
-                return return_response(502, "There was an error during the query", True, None, data, 502)
+                return return_response(502, "There was an error during the query", False, None, data, 502)
             elif len(query_results) > 0:
                 data = query_results
                 return return_response(200, "Successfully returned task", True, None, data, 200)
             else:
                 data =[]
-                return return_response(404, "No results found for that ID", True, None, data, 404)
+                return return_response(404, "No results found for that ID", False, None, data, 404)
         
         else:
 
@@ -328,13 +336,13 @@ def tasks_task_route(task_id=None):
 
             if query_results == False:
                 data = []
-                return return_response(502, "There was an error during the query", True, None, data, 502)
+                return return_response(502, "There was an error during the query", False, None, data, 502)
             elif len(query_results) > 0:
                 data = query_results
                 return return_response(200, "Successfully returned all tasks", True, None, data, 200)
             else:
                 data =[]
-                return return_response(404, "No tasks found", True, None, data, 404)
+                return return_response(404, "No tasks found", False, None, data, 404)
 
     # Adding a new task via PUT method
     elif request.method == "PUT":
@@ -356,17 +364,17 @@ def tasks_task_route(task_id=None):
 
                 if query_results == False:
                     data = []
-                    return return_response(502, "There was an error during the query", True, None, data, 502)
+                    return return_response(502, "There was an error during the query", False, None, data, 502)
                 elif len(query_results) > 0:
                     data = query_results
                     return return_response(201, "Added task successfully", True, None, data, 201)
                 else:
                     data =[]
                     logger.error("No tasks returned from DB for a ID that was just added", extra={'task_id':task_id, 'query_results':query_results})
-                    return return_response(404, "Unable to add task due to an internal error", True, None, data, 404)
+                    return return_response(404, "Unable to add task due to an internal error", False, None, data, 404)
             else:
                 data = task_request
-                return return_response(502, "Unable to add task due to an internal error", True, None, data, 502)
+                return return_response(502, "Unable to add task due to an internal error", False, None, data, 502)
 
         else:
             data = {}
@@ -374,7 +382,7 @@ def tasks_task_route(task_id=None):
             for key in request_json.keys():
                 data['keys'].append(key)
 
-            return return_response(406, "Request does not contain all the required keys", True, None, data, 406)
+            return return_response(406, "Request does not contain all the required keys", False, None, data, 406)
 
     # Adding a new task via PUT method
     elif request.method == "PATCH":
@@ -409,17 +417,17 @@ def tasks_task_route(task_id=None):
 
                 if query_results == False:
                     data = []
-                    return return_response(502, "There was an error during the query", True, None, data, 502)
+                    return return_response(502, "There was an error during the query", TrFalseue, None, data, 502)
                 elif len(query_results) > 0:
                     data = query_results
                     return return_response(201, "Updated task successfully", True, None, data, 201)
                 else:
                     data =[]
                     logger.error("No tasks returned from DB for a ID that was just added", extra={'task_id':task_id, 'query_results':query_results})
-                    return return_response(404, "Unable to update task due to an internal error", True, None, data, 404)
+                    return return_response(404, "Unable to update task due to an internal error", False, None, data, 404)
             else:
                 data = task_request
-                return return_response(502, "Unable to update task due to an internal error", True, None, data, 502)
+                return return_response(502, "Unable to update task due to an internal error", False, None, data, 502)
 
         else:
             data = {}
@@ -427,7 +435,7 @@ def tasks_task_route(task_id=None):
             for key in request_json.keys():
                 data['keys'].append(key)
 
-            return return_response(406, "Request does not contain all the required keys", True, None, data, 406)
+            return return_response(406, "Request does not contain all the required keys", False, None, data, 406)
 
     # Delete task types
     elif request.method == "DELETE":
@@ -441,7 +449,7 @@ def tasks_task_route(task_id=None):
 
                     if query_results == False:
                         data = []
-                        return return_response(502, "There was an error during the query", True, None, data, 502)
+                        return return_response(502, "There was an error during the query", False, None, data, 502)
                     elif len(query_results) == 0:
                         data = []
                         logger.debug("No tasks to delete", extra={'task_id':request_json['id'], 'query_results':query_results})
@@ -454,14 +462,14 @@ def tasks_task_route(task_id=None):
                     return return_response(200, "All tasks deleted successfully", True, None, data, 200)
 
                 else:
-                    return return_response(406, "You requested to delete all tasks, but did not specify confirm.", True, None, data, 406)
+                    return return_response(406, "You requested to delete all tasks, but did not specify confirm.", False, None, data, 406)
             else:
 
                 query_results = get_task(str(request_json['id']))
 
                 if query_results == False:
                     data = []
-                    return return_response(502, "There was an error during the query", True, None, data, 502)
+                    return return_response(502, "There was an error during the query", False, None, data, 502)
                 elif len(query_results) == 0:
                     data = []
                     logger.error("No task found for that ID", extra={'task_id':request_json['id'], 'query_results':query_results})
