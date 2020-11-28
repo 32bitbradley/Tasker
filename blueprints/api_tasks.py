@@ -288,9 +288,9 @@ def tasks_type_download_route(type_id=None):
         return return_response(406, "You did not specify a task type to download", False, None, data, 406)
 
 
-@bp_api_tasks.route("/task/<task_id>", methods=["GET"])
+@bp_api_tasks.route("/task/<url_task_id>", methods=["GET"])
 @bp_api_tasks.route("/task", methods=["GET", "PUT", "PATCH", "DELETE"])
-def tasks_task_route(task_id=None):
+def tasks_task_route(url_task_id=None):
     """This flask def is used to manage tasks. Including getting info on a task , adding a new task  and deleting a task.
 
     Params:
@@ -313,36 +313,86 @@ def tasks_task_route(task_id=None):
 
     # Get a task via GET method
     if request.method == "GET":
-        if task_id != None:
-            logger.debug('A task ID has been provided', extra={'task_id':task_id})
 
-            query_results = get_task(str(task_id))
+        # Pull parameters from request URL query string, set to 'None' if not provided
+        if url_task_id != None:
+            task_id = url_task_id
 
-            if query_results == False:
-                data = []
-                return return_response(502, "There was an error during the query", False, None, data, 502)
-            elif len(query_results) > 0:
-                data = query_results
-                return return_response(200, "Successfully returned task", True, None, data, 200)
-            else:
-                data =[]
-                return return_response(404, "No results found for that ID", False, None, data, 404)
-        
+            logger.debug('A task ID has been provided in the URL', extra={'task_id':url_task_id})
+        elif 'task_id' in request.args:
+            task_id = request.args.get('task_id')
+            logger.debug('A task_id key has been provided in the query args', extra={'task_id':request.args.get('task_id')})
         else:
+            task_id = None
 
-            logger.debug('No task ID has been provided, getting all tasks', extra={'task_id':task_id})
+        if 'task_type' in request.args:
+            task_type = request.args.get('task_type')
+            logger.debug('A target_agent key has been provided in the query args', extra={'task_type':request.args.get('task_type')})
+        else:
+            task_type = None
 
-            query_results = get_task(None)
+        if 'expiration_expired' in request.args:
+            expiration_expired = request.args.get('expiration_expired')
+            logger.debug('A expiration_expired key has been provided in the query args', extra={'expiration_expired':request.args.get('expiration_expired')})
+        else:
+            expiration_expired = None
 
-            if query_results == False:
-                data = []
-                return return_response(502, "There was an error during the query", False, None, data, 502)
-            elif len(query_results) > 0:
-                data = query_results
-                return return_response(200, "Successfully returned all tasks", True, None, data, 200)
-            else:
-                data =[]
-                return return_response(404, "No tasks found", False, None, data, 404)
+        if 'expiration_datetime' in request.args:
+            expiration_datetime = request.args.get('expiration_datetime')
+            logger.debug('A expiration_datetime key has been provided in the query args', extra={'expiration_datetime':request.args.get('expiration_datetime')})
+        else:
+            expiration_datetime = None
+
+        if 'status_status' in request.args:
+            status_status = request.args.get('status_status')
+            logger.debug('A status_status key has been provided in the query args', extra={'status_status':request.args.get('status_status')})
+        else:
+            status_status = None
+
+        if 'status_percentage' in request.args:
+            status_percentage = request.args.get('status_percentage')
+            logger.debug('A status_percentage key has been provided in the query args', extra={'status_percentage':request.args.get('status_percentage')})
+        else:
+            status_percentage = None
+
+        if 'status_timeout' in request.args:
+            status_timeout = request.args.get('status_timeout')
+            logger.debug('A status_timeout key has been provided in the query args', extra={'status_timeout':request.args.get('status_timeout')})
+        else:
+            status_timeout = None
+
+        if 'parameters_json' in request.args:
+            parameters_json = request.args.get('parameters_json')
+            logger.debug('A parameters_json key has been provided in the query args', extra={'parameters_json':request.args.get('parameters_json')})
+        else:
+            parameters_json = None
+
+        if 'response_json' in request.args:
+            response_json = request.args.get('parameterresponse_jsons_json')
+            logger.debug('A response_json key has been provided in the query args', extra={'response_json':request.args.get('response_json')})
+        else:
+            response_json = None
+
+        if 'target_agent' in request.args:
+            target_agent = request.args.get('target_agent')
+            logger.debug('A target_agent key has been provided in the query args', extra={'target_agent':request.args.get('target_agent')})
+        else:
+            target_agent = None
+    
+
+        logger.debug('Executing request', extra={'task_id':task_id, 'task_type':task_type,'expiration_expired':expiration_expired, 'expiration_datetime':expiration_datetime, 'status_status':status_status, 'status_percentage':status_percentage, 'status_timeout':status_timeout, 'parameters_json':parameters_json, 'response_json':response_json, 'target_agent':target_agent})
+
+        query_results = get_task(task_id, task_type, expiration_expired, expiration_datetime, status_status, status_percentage, status_timeout, parameters_json, response_json, target_agent)
+
+        if query_results == False:
+            data = []
+            return return_response(502, "There was an error during the query", False, None, data, 502)
+        elif len(query_results) > 0:
+            data = query_results
+            return return_response(200, "Successfully returned task queery", True, None, data, 200)
+        else:
+            data = []
+            return return_response(404, "No tasks found", False, None, data, 404)
 
     # Adding a new task via PUT method
     elif request.method == "PUT":
@@ -417,7 +467,7 @@ def tasks_task_route(task_id=None):
 
                 if query_results == False:
                     data = []
-                    return return_response(502, "There was an error during the query", TrFalseue, None, data, 502)
+                    return return_response(502, "There was an error during the query", False, None, data, 502)
                 elif len(query_results) > 0:
                     data = query_results
                     return return_response(201, "Updated task successfully", True, None, data, 201)

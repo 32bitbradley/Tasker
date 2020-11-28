@@ -14,9 +14,9 @@ with open("config/config.yaml", mode="r") as f:
 # Init logging
 logger = logging.getLogger()
 if config['logging']['level'] == "DEBUG":
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
 else:
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
 #logger.info('Example log', extra={'Example Key': 'Example Value'})
 
 engine_url = config['database']['type'] + "://" + config['database']['username'] + ":" + config['database']['password'] + "@" + config['database']['host'] + "/" + config['database']['database']
@@ -157,18 +157,83 @@ def update_task(task_info):
 
     return True
 
-def get_task(task_id):
+def get_task(task_id, task_type, expiration_expired, expiration_datetime, status_status, status_percentage, status_timeout, parameters_json, response_json, target_agent):
 
-    if task_id  != None:
-        statement = db_tasks.select().where(
+    logger.debug('Executing db query', extra={'task_id':task_id, 'task_type':task_type,'expiration_expired':expiration_expired, 'expiration_datetime':expiration_datetime, 'status_status':status_status, 'status_percentage':status_percentage, 'status_timeout':status_timeout, 'parameters_json':parameters_json, 'response_json':response_json, 'target_agent':target_agent})
+    
+    statement = db_tasks.select()
+
+    if task_id != None:
+        logger.debug('Adding task_id to statement', extra={'task_id':task_id})
+        statement = statement.where(
             db_tasks.c.id == str(task_id)
             )
-    else:
-        statement = db_tasks.select()
+
+    if task_type != None:
+        logger.debug('Adding task_type to statement', extra={'task_type':task_type})
+        statement = statement.where(
+            db_tasks.c.task_type == str(task_type)
+            )
+
+    if expiration_expired != None:
+        logger.debug('Adding expiration_expired to statement', extra={'expiration_expired':expiration_expired})
+        statement = statement.where(
+            db_tasks.c.expiration_expired == str(expiration_expired)
+            )
+
+    if expiration_datetime != None:
+        logger.debug('Adding expiration_datetime to statement', extra={'expiration_datetime':expiration_datetime})
+        statement = statement.where(
+            db_tasks.c.expiration_datetime == str(expiration_datetime)
+            )
+
+    if status_status != None:
+        logger.debug('Adding status_status to statement', extra={'status_status':status_status})
+        statement = statement.where(
+            db_tasks.c.status_status == str(status_status)
+            )
+    
+    if status_status != None:
+        logger.debug('Adding status_status to statement', extra={'status_status':status_status})
+        statement = statement.where(
+            db_tasks.c.status_status == str(status_status)
+            )
+
+    if status_percentage != None:
+        logger.debug('Adding status_percentage to statement', extra={'status_percentage':status_percentage})
+        statement = statement.where(
+            db_tasks.c.OOstatus_percentageO == str(status_percentage)
+            )
+
+    if status_timeout != None:
+        logger.debug('Adding status_timeout to statement', extra={'status_timeout':status_timeout})
+        statement = statement.where(
+            db_tasks.c.status_timeout == str(status_timeout)
+            )
+
+    if parameters_json != None:
+        logger.debug('Adding parameters_json to statement', extra={'parameters_json':parameters_json})
+        statement = statement.where(
+            db_tasks.c.parameters_json == str(parameters_json)
+            )
+
+    if response_json != None:
+        logger.debug('Adding response_json to statement', extra={'response_json':response_json})
+        statement = statement.where(
+            db_tasks.c.response_json == str(response_json)
+            )
+
+    if target_agent != None:
+        logger.debug('Adding target_agent to statement', extra={'target_agent':target_agent})
+        statement = statement.where(
+            db_tasks.c.target_agent == str(target_agent)
+            )
 
     query_results = None
 
-    logger.debug('Executing SQL', extra={'statement': statement})
+    logger.debug('Executing SQL', extra={'statement': str(statement)})
+
+    
     with engine.begin() as conn:
         query_results = conn.execute(statement).fetchall()
 
