@@ -2,7 +2,7 @@ import random
 import string
 import logging
 import json_log_formatter
-from sqlalchemy import engine, create_engine, MetaData, Table, Column, Integer, select, update, Text, String, Float, TIMESTAMP
+from sqlalchemy import engine, create_engine, MetaData, Table, Column, Integer, select, update, Text, String, Float, TIMESTAMP, or_
 from datetime import datetime
 import json
 import yaml
@@ -190,19 +190,15 @@ def get_task(task_id, task_type, expiration_expired, expiration_datetime, status
     if status_status != None:
         logger.debug('Adding status_status to statement', extra={'status_status':status_status})
         statement = statement.where(
-            db_tasks.c.status_status == str(status_status)
+                or_(
+                    *[ db_tasks.c.status_status == str(item) for item in status_status]
+                )
             )
     
-    if status_status != None:
-        logger.debug('Adding status_status to statement', extra={'status_status':status_status})
-        statement = statement.where(
-            db_tasks.c.status_status == str(status_status)
-            )
-
     if status_percentage != None:
         logger.debug('Adding status_percentage to statement', extra={'status_percentage':status_percentage})
         statement = statement.where(
-            db_tasks.c.OOstatus_percentageO == str(status_percentage)
+            db_tasks.c.status_percentage == str(status_percentage)
             )
 
     if status_timeout != None:

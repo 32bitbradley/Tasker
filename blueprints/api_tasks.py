@@ -343,9 +343,17 @@ def tasks_task_route(url_task_id=None):
         else:
             expiration_datetime = None
 
+        # status_status can be privided as a CSV list 'pending,complete' so parsing ths out and passing to sql_helpers as a list either way
         if 'status_status' in request.args:
-            status_status = request.args.get('status_status')
-            logger.debug('A status_status key has been provided in the query args', extra={'status_status':request.args.get('status_status')})
+            status_status_raw = request.args.get('status_status')
+
+            if ',' in status_status_raw:
+                status_status = status_status_raw.split(',')
+                logger.debug('A status_status key has been provided in the query args and is a list', extra={'status_status':request.args.get('status_status')})
+            else:
+                status_status = []
+                status_status.append(status_status_raw)
+                logger.debug('A status_status key has been provided in the query args and in not a list', extra={'status_status':request.args.get('status_status')})
         else:
             status_status = None
 
