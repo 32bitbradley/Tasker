@@ -121,7 +121,7 @@ def add_task(task_info):
 
     statement = db_tasks.insert().values(
         id=str(task_id),
-        task_type=str(task_info['task']['type']),
+        task_type=str(task_info['task']['type_id']),
         target_agent=str(task_info['target']['agent']),
         expiration_expired=str("False"),
         expiration_datetime=task_info['expiration']['timestamp'],

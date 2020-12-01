@@ -341,11 +341,11 @@ def tasks_task_route(url_task_id=None):
         else:
             task_id = None
 
-        if 'task_type' in request.args:
-            task_type = request.args.get('task_type')
-            logger.debug('A target_agent key has been provided in the query args', extra={'task_type':request.args.get('task_type')})
+        if 'task_type_id' in request.args:
+            task_type_id = request.args.get('task_type_id')
+            logger.debug('A target_agent key has been provided in the query args', extra={'task_type_id':request.args.get('task_type_id')})
         else:
-            task_type = None
+            task_type_id = None
 
         if 'expiration_expired' in request.args:
             expiration_expired = request.args.get('expiration_expired')
@@ -404,24 +404,25 @@ def tasks_task_route(url_task_id=None):
             target_agent = None
     
 
-        logger.debug('Executing request', extra={'task_id':task_id, 'task_type':task_type,'expiration_expired':expiration_expired, 'expiration_datetime':expiration_datetime, 'status_status':status_status, 'status_percentage':status_percentage, 'status_timeout':status_timeout, 'parameters_json':parameters_json, 'response_json':response_json, 'target_agent':target_agent})
+        logger.debug('Executing request', extra={'task_id':task_id, 'task_type_id':task_type_id,'expiration_expired':expiration_expired, 'expiration_datetime':expiration_datetime, 'status_status':status_status, 'status_percentage':status_percentage, 'status_timeout':status_timeout, 'parameters_json':parameters_json, 'response_json':response_json, 'target_agent':target_agent})
 
-        query_results = get_task(task_id, task_type, expiration_expired, expiration_datetime, status_status, status_percentage, status_timeout, parameters_json, response_json, target_agent)
+        query_results = get_task(task_id, task_type_id, expiration_expired, expiration_datetime, status_status, status_percentage, status_timeout, parameters_json, response_json, target_agent)
 
         if query_results == False:
-            data = []
+            data = {}
             return return_response(502, "There was an error during the query", False, None, data, 502)
         elif len(query_results) > 0:
-            data = query_results
-            return return_response(200, "Successfully returned task queery", True, None, data, 200)
+            data = {}
+            data['tasks'] = query_results
+            return return_response(200, "Successfully returned task query", True, None, data, 200)
         else:
-            data = []
+            data = {}
             return return_response(404, "No tasks found", False, None, data, 404)
 
     # Adding a new task via PUT method
     elif request.method == "PUT":
 
-        if ("task" in request_json) and ("target" in request_json) and ("parameters" in request_json) and ("type" in request_json['task']) and ("agent" in request_json['target']) and ("timestamp" in request_json['expiration']):
+        if ("task" in request_json) and ("target" in request_json) and ("parameters" in request_json) and ("type_id" in request_json['task']) and ("agent" in request_json['target']) and ("timestamp" in request_json['expiration']):
 
             logger.debug('Adding new task', extra={'request_json':request_json})
             
@@ -437,13 +438,14 @@ def tasks_task_route(url_task_id=None):
                 query_results = get_task(task_id, None, None, None, None, None, None, None, None, None)
 
                 if query_results == False:
-                    data = []
+                    data = {}
                     return return_response(502, "There was an error during the query", False, None, data, 502)
                 elif len(query_results) > 0:
+                    data = {}
                     data = query_results
                     return return_response(201, "Added task successfully", True, None, data, 201)
                 else:
-                    data =[]
+                    data = {}
                     logger.error("No tasks returned from DB for a ID that was just added", extra={'task_id':task_id, 'query_results':query_results})
                     return return_response(404, "Unable to add task due to an internal error", False, None, data, 404)
             else:
