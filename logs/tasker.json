@@ -31,3 +31,54 @@
 {"query_results": ["('8K6IJHHISNB6CBHU', 'hello', '25ad58ce-9e0f-4de2-808f-03f82c53ddef', 'True', datetime.datetime(2020, 11, 13, 20, 32, 7), 'pending', 0, 'False', '{}', \"{'yeet': 'ofdfdsfdsfdfdsfdsof'}\")", "('UEGAJS50Y80664AF', 'hello', '25ad58ce-9e0f-4de2-808f-03f82c53ddef', 'False', datetime.datetime(2020, 11, 13, 20, 32, 7), 'pending', 0, 'False', \"{'package': {'name': {'comparison': 'string', 'value': 'exim'}, 'version': {'comparison': 'lte', 'value': '4.92'}}}\", None)"], "task_id": null, "message": "Found result in DB", "time": "2020-11-28T20:17:36.770405"}
 {"data": [{"task": {"id": "8K6IJHHISNB6CBHU", "type": "hello"}, "target": {"agent": "25ad58ce-9e0f-4de2-808f-03f82c53ddef"}, "expiration": {"expired": true, "timestamp": 1605299527.0}, "status": {"status": "pending", "percentage": 0, "timeout": false}, "parameters": {}, "response": {"yeet": "ofdfdsfdsfdfdsfdsof"}}, {"task": {"id": "UEGAJS50Y80664AF", "type": "hello"}, "target": {"agent": "25ad58ce-9e0f-4de2-808f-03f82c53ddef"}, "expiration": {"expired": false, "timestamp": 1605299527.0}, "status": {"status": "pending", "percentage": 0, "timeout": false}, "parameters": {"package": {"name": {"comparison": "string", "value": "exim"}, "version": {"comparison": "lte", "value": "4.92"}}}}], "task_id": null, "message": "Returning results", "time": "2020-11-28T20:17:36.770405"}
 {"message": "127.0.0.1 - - [28/Nov/2020 20:17:36] \"\u001b[37mGET /api/tasks/task?status_status=pending HTTP/1.1\u001b[0m\" 200 -", "time": "2020-11-28T20:17:36.771419"}
+{"message": " * Restarting with stat", "time": "2020-12-01T10:31:57.981709"}
+{"message": " * Debugger is active!", "time": "2020-12-01T10:31:58.551719"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-01T10:31:58.560718"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-01T10:31:59.422385"}
+{"type_id": null, "message": "No task type ID has been provided, getting all task types", "time": "2020-12-01T10:32:39.414188"}
+{"message": "127.0.0.1 - - [01/Dec/2020 10:32:39] \"\u001b[33mGET /api/tasks/type HTTP/1.1\u001b[0m\" 404 -", "time": "2020-12-01T10:32:39.507556"}
+{"bin": "hello.py", "message": "Provioded bin file does not exist on the system", "time": "2020-12-01T10:33:02.718110"}
+{"bin": "hello.py", "message": "Content has been provoided, decoding and writing to file", "time": "2020-12-01T10:33:02.718110"}
+{"bin": "hello.py", "message": "Written file", "time": "2020-12-01T10:33:02.719108"}
+{"bin": "hello.py", "message": "Generating SHA256 hash for bin", "time": "2020-12-01T10:33:02.719108"}
+{"hash": "0aa6991a27945f45f9376be0300670700573fa4030b824a9c58f86faa084f927", "message": "Generated SHA256 hash", "time": "2020-12-01T10:33:02.720109"}
+{"task_type": {"name": "hello", "target": "agent", "version": 1, "track_progress": true, "bin": {"name": "hello.py", "exec": "subprocess", "input": "cli", "output": "stdout", "content": "cHJpbnQoIkhlbGxvISIp"}, "shasum": "0aa6991a27945f45f9376be0300670700573fa4030b824a9c58f86faa084f927"}, "message": "Adding new task type", "time": "2020-12-01T10:33:02.720109"}
+{"message": "127.0.0.1 - - [01/Dec/2020 10:33:02] \"\u001b[37mPUT /api/tasks/type HTTP/1.1\u001b[0m\" 201 -", "time": "2020-12-01T10:33:02.765020"}
+{"type_id": null, "message": "No task type ID has been provided, getting all task types", "time": "2020-12-01T10:33:13.378882"}
+{"message": "127.0.0.1 - - [01/Dec/2020 10:33:13] \"\u001b[37mGET /api/tasks/type HTTP/1.1\u001b[0m\" 200 -", "time": "2020-12-01T10:33:13.398882"}
+{"type_id": "2OKLRQF0KLNXGCVI", "message": "A task type ID has been provided", "time": "2020-12-01T10:33:25.105746"}
+{"message": "127.0.0.1 - - [01/Dec/2020 10:33:25] \"\u001b[37mGET /api/tasks/type/2OKLRQF0KLNXGCVI HTTP/1.1\u001b[0m\" 200 -", "time": "2020-12-01T10:33:25.127745"}
+{"request_json": {"task": {"type": "hello"}, "target": {"agent": "25ad58ce-9e0f-4de2-808f-03f82c53ddef"}, "expiration": {"timestamp": 1605299527}, "parameters": {"package": {"name": {"comparison": "string", "value": "exim"}, "version": {"comparison": "lte", "value": "4.92"}}}}, "message": "Adding new task", "time": "2020-12-01T10:36:25.474614"}
+{"task_id": "AI611TSJR13K9MUD", "message": "Added a new task to the DB", "time": "2020-12-01T10:36:25.518935"}
+{"message": "127.0.0.1 - - [01/Dec/2020 10:36:25] \"\u001b[35m\u001b[1mPUT /api/tasks/task HTTP/1.1\u001b[0m\" 500 -", "time": "2020-12-01T10:36:25.526938"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\api_tasks.py', reloading", "time": "2020-12-01T10:38:06.925941"}
+{"message": " * Restarting with stat", "time": "2020-12-01T10:38:06.967930"}
+{"message": " * Debugger is active!", "time": "2020-12-01T10:38:07.532928"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-01T10:38:07.539941"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-01T10:38:08.404180"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\api_tasks.py', reloading", "time": "2020-12-01T10:41:06.970995"}
+{"message": " * Restarting with stat", "time": "2020-12-01T10:41:07.007982"}
+{"message": " * Debugger is active!", "time": "2020-12-01T10:41:07.580984"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-01T10:41:07.587983"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-01T10:41:08.454756"}
+{"request_json": {"task": {"type": "hello"}, "target": {"agent": "25ad58ce-9e0f-4de2-808f-03f82c53ddef"}, "expiration": {"timestamp": 1605299527}, "parameters": {"package": {"name": {"comparison": "string", "value": "exim"}, "version": {"comparison": "lte", "value": "4.92"}}}}, "message": "Adding new task", "time": "2020-12-01T10:41:12.006396"}
+{"task_id": "04OA18WJN1P8UMHP", "message": "Added a new task to the DB", "time": "2020-12-01T10:41:12.046109"}
+{"message": "127.0.0.1 - - [01/Dec/2020 10:41:12] \"\u001b[35m\u001b[1mPUT /api/tasks/task HTTP/1.1\u001b[0m\" 500 -", "time": "2020-12-01T10:41:12.055112"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\api_tasks.py', reloading", "time": "2020-12-01T10:41:21.119480"}
+{"message": " * Restarting with stat", "time": "2020-12-01T10:41:21.170469"}
+{"message": " * Debugger is active!", "time": "2020-12-01T10:41:21.757495"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-01T10:41:21.766493"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-01T10:41:22.630894"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\api_tasks.py', reloading", "time": "2020-12-01T10:42:24.052599"}
+{"message": " * Restarting with stat", "time": "2020-12-01T10:42:24.098598"}
+{"message": " * Debugger is active!", "time": "2020-12-01T10:42:24.667182"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-01T10:42:24.673698"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-01T10:42:25.538799"}
+{"request_json": {"task": {"type": "hello"}, "target": {"agent": "25ad58ce-9e0f-4de2-808f-03f82c53ddef"}, "expiration": {"timestamp": 1605299527}, "parameters": {"package": {"name": {"comparison": "string", "value": "exim"}, "version": {"comparison": "lte", "value": "4.92"}}}}, "message": "Adding new task", "time": "2020-12-01T10:42:26.392423"}
+{"task_id": "RYQ09SWP56UW66IZ", "message": "Added a new task to the DB", "time": "2020-12-01T10:42:26.447549"}
+{"task_id": "RYQ09SWP56UW66IZ", "task_type": null, "expiration_expired": null, "expiration_datetime": null, "status_status": null, "status_percentage": null, "status_timeout": null, "parameters_json": null, "response_json": null, "target_agent": null, "message": "Executing db query", "time": "2020-12-01T10:42:26.447549"}
+{"task_id": "RYQ09SWP56UW66IZ", "message": "Adding task_id to statement", "time": "2020-12-01T10:42:26.448537"}
+{"statement": "SELECT tasks.id, tasks.task_type, tasks.target_agent, tasks.expiration_expired, tasks.expiration_datetime, tasks.status_status, tasks.status_percentage, tasks.status_timeout, tasks.parameters_json, tasks.response_json \nFROM tasks \nWHERE tasks.id = :id_1", "message": "Executing SQL", "time": "2020-12-01T10:42:26.448537"}
+{"query_results": ["('RYQ09SWP56UW66IZ', 'hello', '25ad58ce-9e0f-4de2-808f-03f82c53ddef', 'False', datetime.datetime(2020, 11, 13, 20, 32, 7), 'pending', 0, 'False', \"{'package': {'name': {'comparison': 'string', 'value': 'exim'}, 'version': {'comparison': 'lte', 'value': '4.92'}}}\", None)"], "task_id": "RYQ09SWP56UW66IZ", "message": "Found result in DB", "time": "2020-12-01T10:42:26.450538"}
+{"data": [{"task": {"id": "RYQ09SWP56UW66IZ", "type": "hello"}, "target": {"agent": "25ad58ce-9e0f-4de2-808f-03f82c53ddef"}, "expiration": {"expired": false, "timestamp": 1605299527.0}, "status": {"status": "pending", "percentage": 0, "timeout": false}, "parameters": {"package": {"name": {"comparison": "string", "value": "exim"}, "version": {"comparison": "lte", "value": "4.92"}}}}], "task_id": "RYQ09SWP56UW66IZ", "message": "Returning results", "time": "2020-12-01T10:42:26.450538"}
+{"message": "127.0.0.1 - - [01/Dec/2020 10:42:26] \"\u001b[37mPUT /api/tasks/task HTTP/1.1\u001b[0m\" 201 -", "time": "2020-12-01T10:42:26.451538"}

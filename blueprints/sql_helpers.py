@@ -29,9 +29,12 @@ db_tasks_types = Table('types', metadata,
     Column('name', String(255)),
     Column('target', String(255)),
     Column('version', Float(12)),
-    Column('bin', String(255)),
+    Column('bin_name', String(255)),
     Column('shasum', String(255)),
     Column('track_progress', String(255)),
+    Column('bin_exec', String(255)),
+    Column('bin_input', String(255)),
+    Column('bin_output', String(255)),
 )
 db_tasks = Table('tasks', metadata,
     Column('id', String(16), primary_key=True),
@@ -66,9 +69,12 @@ def add_task_type(type_info):
         name=str(type_info['name']),
         target=str(type_info['target']),
         version=float(type_info['version']),
-        bin=str(type_info['bin']['name']),
+        bin_name=str(type_info['bin']['name']),
         shasum=str(type_info['shasum']),
-        track_progress=str(type_info['track_progress'])
+        track_progress=str(type_info['track_progress']),
+        bin_exec=str(type_info['bin']['exec']),
+        bin_input=str(type_info['bin']['input']),
+        bin_output=str(type_info['bin']['output'])
         )
 
     logger.debug('Executing SQL', extra={'statement': statement})

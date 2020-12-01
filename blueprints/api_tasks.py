@@ -96,9 +96,13 @@ def tasks_type_route(type_id=None):
                     tmp_data["name"] = row[1]
                     tmp_data["target"] = row[2]
                     tmp_data["version"] = row[3]
-                    tmp_data["bin"] = row[4]
+                    tmp_data["bin"] = {}
+                    tmp_data["bin"]['name'] = row[4]
                     tmp_data["shasum"] = row[5]
                     tmp_data["track_progress"] = row[6]
+                    tmp_data["bin"]['exec'] = row[7]
+                    tmp_data["bin"]['input'] = row[8]
+                    tmp_data["bin"]['output'] = row[9]
                     data.append(tmp_data)
                 
                 return return_response(200, "Successfully returned task type", True, None, data, 200)
@@ -123,9 +127,13 @@ def tasks_type_route(type_id=None):
                     tmp_data["name"] = row[1]
                     tmp_data["target"] = row[2]
                     tmp_data["version"] = row[3]
-                    tmp_data["bin"] = row[4]
+                    tmp_data["bin"] = {}
+                    tmp_data["bin"]['name'] = row[4]
                     tmp_data["shasum"] = row[5]
                     tmp_data["track_progress"] = row[6]
+                    tmp_data["bin"]['exec'] = row[7]
+                    tmp_data["bin"]['input'] = row[8]
+                    tmp_data["bin"]['output'] = row[9]
                     data.append(tmp_data)
                 
                 return return_response(200, "Successfully returned all task types", True, None, data, 200)
@@ -139,7 +147,15 @@ def tasks_type_route(type_id=None):
     # Adding a new task via PUT method
     elif request.method == "PUT":
 
-        if ("name" in request_json) and ("target" in request_json) and ("version" in request_json) and ("bin" in request_json) and ("track_progress" in request_json) and ("name" in request_json['bin']):
+        if ("name" in request_json) and \
+            ("target" in request_json) and \
+            ("version" in request_json) and \
+            ("bin" in request_json) and \
+            ("track_progress" in request_json) and \
+            ("name" in request_json['bin']) and \
+            ("exec" in request_json['bin']) and \
+            ("input" in request_json['bin']) and \
+            ("output" in request_json['bin']):
 
             task_type = request_json
 
@@ -418,7 +434,7 @@ def tasks_task_route(url_task_id=None):
 
             if task_id != None:
 
-                query_results = get_task(str(task_id))
+                query_results = get_task(task_id, None, None, None, None, None, None, None, None, None)
 
                 if query_results == False:
                     data = []
@@ -523,7 +539,7 @@ def tasks_task_route(url_task_id=None):
                     return return_response(406, "You requested to delete all tasks, but did not specify confirm.", False, None, data, 406)
             else:
 
-                query_results = get_task(str(request_json['id']))
+                query_results = get_task(str(request_json['id']), None, None, None, None, None, None, None, None, None)
 
                 if query_results == False:
                     data = []
