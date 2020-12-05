@@ -48,7 +48,7 @@ def is_base64(sb):
     except Exception:
             return False
 
-bp_api_tasks = Blueprint("tasks", __name__, url_prefix="/api/tasks")
+bp_api_tasks = Blueprint("tasks", __name__, url_prefix="/api")
 
 @bp_api_tasks.route("/type/<type_id>", methods=["GET"])
 @bp_api_tasks.route("/type", methods=["GET", "PUT", "DELETE"])
@@ -88,7 +88,8 @@ def tasks_type_route(type_id=None):
 
             elif len(query_results) > 0:
 
-                data = []
+                data = {}
+                data['results'] = []
 
                 for row in query_results:
                     tmp_data = {}   
@@ -103,7 +104,7 @@ def tasks_type_route(type_id=None):
                     tmp_data["bin"]['exec'] = row[7]
                     tmp_data["bin"]['input'] = row[8]
                     tmp_data["bin"]['output'] = row[9]
-                    data.append(tmp_data)
+                    data['results'].append(tmp_data)
                 
                 return return_response(200, "Successfully returned task type", True, None, data, 200)
             
@@ -119,7 +120,8 @@ def tasks_type_route(type_id=None):
 
             if len(query_results) > 0:
 
-                data = []
+                data = {}
+                data['results'] = []
 
                 for row in query_results:
                     tmp_data = {}   
@@ -134,7 +136,7 @@ def tasks_type_route(type_id=None):
                     tmp_data["bin"]['exec'] = row[7]
                     tmp_data["bin"]['input'] = row[8]
                     tmp_data["bin"]['output'] = row[9]
-                    data.append(tmp_data)
+                    data['results'].append(tmp_data)
                 
                 return return_response(200, "Successfully returned all task types", True, None, data, 200)
 
@@ -413,7 +415,7 @@ def tasks_task_route(url_task_id=None):
             return return_response(502, "There was an error during the query", False, None, data, 502)
         elif len(query_results) > 0:
             data = {}
-            data['tasks'] = query_results
+            data['results'] = query_results
             return return_response(200, "Successfully returned task query", True, None, data, 200)
         else:
             data = {}
