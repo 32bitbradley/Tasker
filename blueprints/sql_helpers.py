@@ -121,7 +121,7 @@ def add_task(task_info):
 
     statement = db_tasks.insert().values(
         id=str(task_id),
-        task_type=str(task_info['task']['type_id']),
+        task_type=str(task_info['task']['type']),
         target_agent=str(task_info['target']['agent']),
         expiration_expired=str("False"),
         expiration_datetime=task_info['expiration']['timestamp'],
@@ -272,7 +272,7 @@ def get_task(task_id, task_type, expiration_expired, expiration_datetime, status
                 #tmp_data['parameters'] = json.loads(row[8])
                 tmp_data['parameters'] = json.loads(str(row[8]).replace("'", '"'))
                 if row[9]:
-                    tmp_data['response'] = json.loads(str(row[9]).replace("'", '"'))
+                    tmp_data['response'] = json.loads(str(row[9]))
                 data.append(tmp_data)
         
     else:

@@ -427,7 +427,7 @@ def tasks_task_route(url_task_id=None):
     # Adding a new task via PUT method
     elif request.method == "PUT":
 
-        if ("task" in request_json) and ("target" in request_json) and ("parameters" in request_json) and ("type_id" in request_json['task']) and ("agent" in request_json['target']) and ("timestamp" in request_json['expiration']):
+        if ("task" in request_json) and ("target" in request_json) and ("parameters" in request_json) and ("type" in request_json['task']) and ("agent" in request_json['target']) and ("timestamp" in request_json['expiration']):
 
             logger.debug('Adding new task', extra={'request_json':request_json})
             
