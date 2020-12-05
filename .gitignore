@@ -131,3 +131,5 @@ dmypy.json
 # Project specific
 config/config.yaml
 logs/*
+logs/tasker.json
+.vscode/settings.json
