@@ -7,7 +7,7 @@ import os.path
 import os
 import shutil
 import json_log_formatter
-from flask import Blueprint, request, jsonify, Flask, render_template, send_file
+from flask import Blueprint, request, jsonify, Flask, render_template, send_file, send_from_directory
 from datetime import datetime
 from .http_helpers import return_response
 from .sql_helpers import add_task_type
@@ -111,6 +111,7 @@ def tasks_type_route(type_id=None):
             else:
 
                 data = {}
+                data['results'] = []
                 return return_response(404, "No results found for that ID", False, None, data, 404)
         else:
 
@@ -143,7 +144,7 @@ def tasks_type_route(type_id=None):
             else:
 
                 data = {}
-
+                data['results'] = []
                 return return_response(404, "No task types found", False, None, data, 404)
 
     # Adding a new task via PUT method
@@ -210,7 +211,7 @@ def tasks_type_route(type_id=None):
 
         else:
             data = {}
-            data['keys'] = request_json.keys()
+            data['keys'] = str(request_json.keys())
             return return_response(406, "Request does not contain all the required keys", False, None, data, 406)
 
     # Delete task types
@@ -301,7 +302,7 @@ def tasks_type_download_route(type_id=None):
             return send_from_directory(directory=bin_directory, filename=str(data[4]), as_attachment=True)
         else:
             data = []
-            return return_response(404, "No task type found for that ID", False, None, data, 404)
+            return return_response(200, "No task type found for that ID", False, None, data, 200)
     else:
         return return_response(406, "You did not specify a task type to download", False, None, data, 406)
 
@@ -412,6 +413,7 @@ def tasks_task_route(url_task_id=None):
 
         if query_results == False:
             data = {}
+            data['results'] = []
             return return_response(502, "There was an error during the query", False, None, data, 502)
         elif len(query_results) > 0:
             data = {}
@@ -419,7 +421,8 @@ def tasks_task_route(url_task_id=None):
             return return_response(200, "Successfully returned task query", True, None, data, 200)
         else:
             data = {}
-            return return_response(404, "No tasks found", False, None, data, 404)
+            data['results'] = []
+            return return_response(200, "No tasks found", False, None, data, 200)
 
     # Adding a new task via PUT method
     elif request.method == "PUT":
@@ -491,14 +494,14 @@ def tasks_task_route(url_task_id=None):
 
             if task_id != None:
 
-                query_results = get_task(str(task_request['task']['id']))
+                query_results = get_task(str(task_request['task']['id']), None, None, None, None, None, None, None, None, None)
 
                 if query_results == False:
                     data = []
                     return return_response(502, "There was an error during the query", False, None, data, 502)
                 elif len(query_results) > 0:
                     data = query_results
-                    return return_response(201, "Updated task successfully", True, None, data, 201)
+                    return return_response(200, "Updated task successfully", True, None, data, 200)
                 else:
                     data =[]
                     logger.error("No tasks returned from DB for a ID that was just added", extra={'task_id':task_id, 'query_results':query_results})
