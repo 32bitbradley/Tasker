@@ -163,6 +163,78 @@ def update_task(task_info):
 
     return True
 
+def update_task2(new_task_info):
+
+    statement = db_tasks.update().where(
+        db_tasks.c.id==str(new_task_info['task']['id'])
+        )
+    statement = statement.values(
+                task_id=str(new_task_info['task']['id'])
+                )
+
+    if "expiration" in new_task_info:
+        if ("expired" in new_task_info['expiration']):
+            logger.debug('Adding field to statement', extra={'field':"expiration.expired", 'value':new_task_info['expiration']['expired']})
+            statement = statement.values(
+                expiration_expired=str(new_task_info['expiration']['expired'])
+                )
+        if ("timestamp" in new_task_info['expiration']):
+            logger.debug('Adding field to statement', extra={'field':"expiration.timestamp", 'value':new_task_info['expiration']['timestamp']})
+            statement = statement.values(
+                expiration_timestamp=str(new_task_info['expiration']['timestamp'])
+                )
+
+    if "parameters" in new_task_info:
+        logger.debug('Adding field to statement', extra={'field':"parameters", 'value':new_task_info['parameters']})
+        statement = statement.values(
+            parameters_json=str(new_task_info['parameters'])
+            )
+
+    if "response" in new_task_info:
+        logger.debug('Adding field to statement', extra={'field':"response", 'value':new_task_info['response']})
+        statement = statement.values(
+            response_json=str(new_task_info['response'])
+            )
+
+    if "status" in new_task_info:
+        if ("percentage" in new_task_info['status']):
+            logger.debug('Adding field to statement', extra={'field':"status.percentage", 'value':new_task_info['status']['percentage']})
+            statement = statement.values(
+                status_percentage=str(new_task_info['status']['percentage'])
+                )
+        if ("status" in new_task_info['status']):
+            logger.debug('Adding field to statement', extra={'field':"status.status", 'value':new_task_info['status']['status']})
+            statement = statement.values(
+                status_status=str(new_task_info['status']['status'])
+                )
+        if ("timeout" in new_task_info['status']):
+            logger.debug('Adding field to statement', extra={'field':"status.timeout", 'value':new_task_info['status']['timeout']})
+            statement = statement.values(
+                status_timeout=str(new_task_info['status']['timeout'])
+                )
+
+    if "target" in new_task_info:
+        if ("agent" in new_task_info['target']):
+            logger.debug('Adding field to statement', extra={'field':"target.agent", 'value':new_task_info['target']['agent']})
+            statement = statement.values(
+                target_agent=str(new_task_info['target']['agent'])
+                )
+
+
+    if "task" in new_task_info:
+        if ("type" in new_task_info['task']):
+            logger.debug('Adding field to statement', extra={'field':"task.type", 'value':new_task_info['task']['type']})
+            statement = statement.values(
+                type_id=str(new_task_info['task']['type'])
+                )
+        # ID should allways be there
+
+    logger.debug('Executing SQL', extra={'statement': statement})
+    with engine.begin() as conn:
+        conn.execute(statement)
+
+    return True
+
 def get_task(task_id, task_type, expiration_expired, expiration_datetime, status_status, status_percentage, status_timeout, parameters_json, response_json, target_agent):
 
     logger.debug('Executing db query', extra={'task_id':task_id, 'task_type':task_type,'expiration_expired':expiration_expired, 'expiration_datetime':expiration_datetime, 'status_status':status_status, 'status_percentage':status_percentage, 'status_timeout':status_timeout, 'parameters_json':parameters_json, 'response_json':response_json, 'target_agent':target_agent})

@@ -1,0 +1,91 @@
+{"message": " * Restarting with stat", "time": "2020-12-05T11:03:25.572135"}
+{"message": " * Debugger is active!", "time": "2020-12-05T11:03:26.148772"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-05T11:03:26.156766"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-05T11:03:27.085494"}
+{"task_id": "I6ZEW2B35CLFMSBM", "message": "A task ID has been provided in the URL", "time": "2020-12-05T11:03:33.205937"}
+{"task_id": "I6ZEW2B35CLFMSBM", "task_type_id": null, "expiration_expired": null, "expiration_datetime": null, "status_status": null, "status_percentage": null, "status_timeout": null, "parameters_json": null, "response_json": null, "target_agent": null, "message": "Executing request", "time": "2020-12-05T11:03:33.205937"}
+{"task_id": "I6ZEW2B35CLFMSBM", "task_type": null, "expiration_expired": null, "expiration_datetime": null, "status_status": null, "status_percentage": null, "status_timeout": null, "parameters_json": null, "response_json": null, "target_agent": null, "message": "Executing db query", "time": "2020-12-05T11:03:33.205937"}
+{"task_id": "I6ZEW2B35CLFMSBM", "message": "Adding task_id to statement", "time": "2020-12-05T11:03:33.205937"}
+{"statement": "SELECT tasks.id, tasks.task_type, tasks.target_agent, tasks.expiration_expired, tasks.expiration_datetime, tasks.status_status, tasks.status_percentage, tasks.status_timeout, tasks.parameters_json, tasks.response_json \nFROM tasks \nWHERE tasks.id = :id_1", "message": "Executing SQL", "time": "2020-12-05T11:03:33.206935"}
+{"query_results": ["('I6ZEW2B35CLFMSBM', '2OKLRQF0KLNXGCVI', '25ad58ce-9e0f-4de2-808f-03f82c53ddef', 'False', datetime.datetime(2020, 11, 13, 20, 32, 7), 'pending', 0, 'False', \"{'package': {'name': {'comparison': 'string', 'value': 'exim'}, 'version': {'comparison': 'lte', 'value': '4.92'}}}\", None)"], "task_id": "I6ZEW2B35CLFMSBM", "message": "Found result in DB", "time": "2020-12-05T11:03:33.219932"}
+{"data": [{"task": {"id": "I6ZEW2B35CLFMSBM", "type": "2OKLRQF0KLNXGCVI"}, "target": {"agent": "25ad58ce-9e0f-4de2-808f-03f82c53ddef"}, "expiration": {"expired": false, "timestamp": 1605299527.0}, "status": {"status": "pending", "percentage": 0, "timeout": false}, "parameters": {"package": {"name": {"comparison": "string", "value": "exim"}, "version": {"comparison": "lte", "value": "4.92"}}}}], "task_id": "I6ZEW2B35CLFMSBM", "message": "Returning results", "time": "2020-12-05T11:03:33.220934"}
+{"message": "127.0.0.1 - - [05/Dec/2020 11:03:33] \"\u001b[37mGET /api/task/I6ZEW2B35CLFMSBM HTTP/1.1\u001b[0m\" 200 -", "time": "2020-12-05T11:03:33.220934"}
+{"message": "127.0.0.1 - - [05/Dec/2020 11:03:40] \"\u001b[33mPUT /api/tasks/task HTTP/1.1\u001b[0m\" 404 -", "time": "2020-12-05T11:03:40.759316"}
+{"task_id": "I6ZEW2B35CLFMSBM", "message": "A task ID has been provided in the URL", "time": "2020-12-05T11:03:51.498484"}
+{"task_id": "I6ZEW2B35CLFMSBM", "task_type_id": null, "expiration_expired": null, "expiration_datetime": null, "status_status": null, "status_percentage": null, "status_timeout": null, "parameters_json": null, "response_json": null, "target_agent": null, "message": "Executing request", "time": "2020-12-05T11:03:51.499485"}
+{"task_id": "I6ZEW2B35CLFMSBM", "task_type": null, "expiration_expired": null, "expiration_datetime": null, "status_status": null, "status_percentage": null, "status_timeout": null, "parameters_json": null, "response_json": null, "target_agent": null, "message": "Executing db query", "time": "2020-12-05T11:03:51.499485"}
+{"task_id": "I6ZEW2B35CLFMSBM", "message": "Adding task_id to statement", "time": "2020-12-05T11:03:51.499485"}
+{"statement": "SELECT tasks.id, tasks.task_type, tasks.target_agent, tasks.expiration_expired, tasks.expiration_datetime, tasks.status_status, tasks.status_percentage, tasks.status_timeout, tasks.parameters_json, tasks.response_json \nFROM tasks \nWHERE tasks.id = :id_1", "message": "Executing SQL", "time": "2020-12-05T11:03:51.500485"}
+{"query_results": ["('I6ZEW2B35CLFMSBM', '2OKLRQF0KLNXGCVI', '25ad58ce-9e0f-4de2-808f-03f82c53ddef', 'False', datetime.datetime(2020, 11, 13, 20, 32, 7), 'pending', 0, 'False', \"{'package': {'name': {'comparison': 'string', 'value': 'exim'}, 'version': {'comparison': 'lte', 'value': '4.92'}}}\", None)"], "task_id": "I6ZEW2B35CLFMSBM", "message": "Found result in DB", "time": "2020-12-05T11:03:51.501485"}
+{"data": [{"task": {"id": "I6ZEW2B35CLFMSBM", "type": "2OKLRQF0KLNXGCVI"}, "target": {"agent": "25ad58ce-9e0f-4de2-808f-03f82c53ddef"}, "expiration": {"expired": false, "timestamp": 1605299527.0}, "status": {"status": "pending", "percentage": 0, "timeout": false}, "parameters": {"package": {"name": {"comparison": "string", "value": "exim"}, "version": {"comparison": "lte", "value": "4.92"}}}}], "task_id": "I6ZEW2B35CLFMSBM", "message": "Returning results", "time": "2020-12-05T11:03:51.501485"}
+{"message": "127.0.0.1 - - [05/Dec/2020 11:03:51] \"\u001b[37mGET /api/task/I6ZEW2B35CLFMSBM HTTP/1.1\u001b[0m\" 200 -", "time": "2020-12-05T11:03:51.501485"}
+{"request_json": {"expiration": {"expired": false, "timestamp": 1605299527.0}, "parameters": {"package": {"name": {"comparison": "string", "value": "exim"}, "version": {"comparison": "lte", "value": "4.92"}}}, "status": {"percentage": 0, "status": "pending", "timeout": false}, "target": {"agent": "25ad58ce-9e0f-4de2-808f-03f82c53ddef"}, "task": {"id": "I6ZEW2B35CLFMSBM", "type": "2OKLRQF0KLNXGCVI"}}, "message": "Updating task", "time": "2020-12-05T11:04:22.761219"}
+{"task_id": true, "message": "Updated task in the DB", "time": "2020-12-05T11:04:22.794219"}
+{"message": "127.0.0.1 - - [05/Dec/2020 11:04:22] \"\u001b[35m\u001b[1mPATCH /api/task HTTP/1.1\u001b[0m\" 500 -", "time": "2020-12-05T11:04:22.804225"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\sql_helpers.py', reloading", "time": "2020-12-05T11:05:32.807176"}
+{"message": " * Restarting with stat", "time": "2020-12-05T11:05:32.855190"}
+{"message": " * Debugger is active!", "time": "2020-12-05T11:05:33.473393"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-05T11:05:33.480393"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-05T11:05:34.345762"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\api_tasks.py', reloading", "time": "2020-12-05T11:06:18.114472"}
+{"message": " * Restarting with stat", "time": "2020-12-05T11:06:18.152988"}
+{"message": " * Debugger is active!", "time": "2020-12-05T11:06:18.762506"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-05T11:06:18.771504"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-05T11:06:19.632666"}
+{"request_json": {"expiration": {"expired": false, "timestamp": 1605299527.0}, "parameters": {"package": {"name": {"comparison": "string", "value": "exim"}, "version": {"comparison": "lte", "value": "4.92"}}}, "status": {"percentage": 0, "status": "pending", "timeout": false}, "target": {"agent": "25ad58ce-9e0f-4de2-808f-03f82c53ddef"}, "task": {"id": "I6ZEW2B35CLFMSBM", "type": "2OKLRQF0KLNXGCVI"}}, "message": "Updating task", "time": "2020-12-05T11:06:20.092715"}
+{"task_id": true, "message": "Updated task in the DB", "time": "2020-12-05T11:06:20.139716"}
+{"task_id": "I6ZEW2B35CLFMSBM", "task_type": null, "expiration_expired": null, "expiration_datetime": null, "status_status": null, "status_percentage": null, "status_timeout": null, "parameters_json": null, "response_json": null, "target_agent": null, "message": "Executing db query", "time": "2020-12-05T11:06:20.140717"}
+{"task_id": "I6ZEW2B35CLFMSBM", "message": "Adding task_id to statement", "time": "2020-12-05T11:06:20.140717"}
+{"statement": "SELECT tasks.id, tasks.task_type, tasks.target_agent, tasks.expiration_expired, tasks.expiration_datetime, tasks.status_status, tasks.status_percentage, tasks.status_timeout, tasks.parameters_json, tasks.response_json \nFROM tasks \nWHERE tasks.id = :id_1", "message": "Executing SQL", "time": "2020-12-05T11:06:20.140717"}
+{"query_results": ["('I6ZEW2B35CLFMSBM', '2OKLRQF0KLNXGCVI', '25ad58ce-9e0f-4de2-808f-03f82c53ddef', 'False', datetime.datetime(2020, 11, 13, 20, 32, 7), 'pending', 0, 'False', \"{'package': {'name': {'comparison': 'string', 'value': 'exim'}, 'version': {'comparison': 'lte', 'value': '4.92'}}}\", None)"], "task_id": "I6ZEW2B35CLFMSBM", "message": "Found result in DB", "time": "2020-12-05T11:06:20.141715"}
+{"data": [{"task": {"id": "I6ZEW2B35CLFMSBM", "type": "2OKLRQF0KLNXGCVI"}, "target": {"agent": "25ad58ce-9e0f-4de2-808f-03f82c53ddef"}, "expiration": {"expired": false, "timestamp": 1605299527.0}, "status": {"status": "pending", "percentage": 0, "timeout": false}, "parameters": {"package": {"name": {"comparison": "string", "value": "exim"}, "version": {"comparison": "lte", "value": "4.92"}}}}], "task_id": "I6ZEW2B35CLFMSBM", "message": "Returning results", "time": "2020-12-05T11:06:20.141715"}
+{"message": "127.0.0.1 - - [05/Dec/2020 11:06:20] \"\u001b[37mPATCH /api/task HTTP/1.1\u001b[0m\" 201 -", "time": "2020-12-05T11:06:20.142715"}
+{"request_json": {"expiration": {"expired": true}, "task": {"id": "I6ZEW2B35CLFMSBM", "type": "2OKLRQF0KLNXGCVI"}}, "message": "Updating task", "time": "2020-12-05T11:06:54.794116"}
+{"message": "127.0.0.1 - - [05/Dec/2020 11:06:54] \"\u001b[35m\u001b[1mPATCH /api/task HTTP/1.1\u001b[0m\" 500 -", "time": "2020-12-05T11:06:54.817515"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\api_tasks.py', reloading", "time": "2020-12-05T11:07:34.569241"}
+{"message": " * Restarting with stat", "time": "2020-12-05T11:07:34.617358"}
+{"message": " * Debugger is active!", "time": "2020-12-05T11:07:35.230545"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-05T11:07:35.238544"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-05T11:07:36.104589"}
+{"request_json": {"expiration": {"expired": true}, "task": {"id": "I6ZEW2B35CLFMSBM", "type": "2OKLRQF0KLNXGCVI"}}, "message": "Updating task", "time": "2020-12-05T11:07:36.276029"}
+{"message": "127.0.0.1 - - [05/Dec/2020 11:07:36] \"\u001b[35m\u001b[1mPATCH /api/task HTTP/1.1\u001b[0m\" 500 -", "time": "2020-12-05T11:07:36.287029"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\api_tasks.py', reloading", "time": "2020-12-05T11:07:56.023399"}
+{"message": " * Restarting with stat", "time": "2020-12-05T11:07:56.071399"}
+{"message": " * Debugger is active!", "time": "2020-12-05T11:07:56.673398"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-05T11:07:56.681397"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-05T11:07:57.617659"}
+{"request_json": {"expiration": {"expired": true}, "task": {"id": "I6ZEW2B35CLFMSBM", "type": "2OKLRQF0KLNXGCVI"}}, "message": "Updating task", "time": "2020-12-05T11:07:57.984304"}
+{"message": "127.0.0.1 - - [05/Dec/2020 11:07:57] \"\u001b[35m\u001b[1mPATCH /api/task HTTP/1.1\u001b[0m\" 500 -", "time": "2020-12-05T11:07:57.993316"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\api_tasks.py', reloading", "time": "2020-12-05T11:08:09.167207"}
+{"message": " * Restarting with stat", "time": "2020-12-05T11:08:09.212209"}
+{"message": " * Debugger is active!", "time": "2020-12-05T11:08:09.850286"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-05T11:08:09.858287"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-05T11:08:10.724495"}
+{"request_json": {"expiration": {"expired": true}, "task": {"id": "I6ZEW2B35CLFMSBM", "type": "2OKLRQF0KLNXGCVI"}}, "message": "Updating task", "time": "2020-12-05T11:08:18.335816"}
+{"field": "expiration.expired", "value": true, "message": "Adding field to statement", "time": "2020-12-05T11:08:18.335816"}
+{"field": "task.type", "value": "2OKLRQF0KLNXGCVI", "message": "Adding field to statement", "time": "2020-12-05T11:08:18.335816"}
+{"message": "127.0.0.1 - - [05/Dec/2020 11:08:18] \"\u001b[35m\u001b[1mPATCH /api/task HTTP/1.1\u001b[0m\" 500 -", "time": "2020-12-05T11:08:18.475816"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\sql_helpers.py', reloading", "time": "2020-12-05T11:08:54.522123"}
+{"message": " * Restarting with stat", "time": "2020-12-05T11:08:54.575124"}
+{"message": " * Debugger is active!", "time": "2020-12-05T11:08:55.154105"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-05T11:08:55.161105"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-05T11:08:56.024091"}
+{"request_json": {"expiration": {"expired": true}, "task": {"id": "I6ZEW2B35CLFMSBM", "type": "2OKLRQF0KLNXGCVI"}}, "message": "Updating task", "time": "2020-12-05T11:08:59.722895"}
+{"message": "127.0.0.1 - - [05/Dec/2020 11:08:59] \"\u001b[35m\u001b[1mPATCH /api/task HTTP/1.1\u001b[0m\" 500 -", "time": "2020-12-05T11:08:59.731896"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\sql_helpers.py', reloading", "time": "2020-12-05T11:09:05.587919"}
+{"message": " * Restarting with stat", "time": "2020-12-05T11:09:05.632138"}
+{"message": " * Debugger is active!", "time": "2020-12-05T11:09:06.251666"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-05T11:09:06.258511"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-05T11:09:07.122654"}
+{"request_json": {"expiration": {"expired": true}, "task": {"id": "I6ZEW2B35CLFMSBM", "type": "2OKLRQF0KLNXGCVI"}}, "message": "Updating task", "time": "2020-12-05T11:09:07.340656"}
+{"message": "127.0.0.1 - - [05/Dec/2020 11:09:07] \"\u001b[35m\u001b[1mPATCH /api/task HTTP/1.1\u001b[0m\" 500 -", "time": "2020-12-05T11:09:07.350660"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\api_tasks.py', reloading", "time": "2020-12-05T11:14:15.363108"}
+{"message": " * Restarting with stat", "time": "2020-12-05T11:14:15.411128"}
+{"message": " * Debugger is active!", "time": "2020-12-05T11:14:16.008781"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-05T11:14:16.016327"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-05T11:14:16.879897"}
+{"message": " * Detected change in 'c:\\\\Users\\\\Brad\\\\Desktop\\\\Tasker\\\\blueprints\\\\sql_helpers.py', reloading", "time": "2020-12-05T11:14:48.205937"}
+{"message": " * Restarting with stat", "time": "2020-12-05T11:14:48.244666"}
+{"message": " * Debugger is active!", "time": "2020-12-05T11:14:48.817467"}
+{"message": " * Debugger PIN: 231-372-492", "time": "2020-12-05T11:14:48.824479"}
+{"message": " * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)", "time": "2020-12-05T11:14:49.687478"}

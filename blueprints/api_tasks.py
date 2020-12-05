@@ -15,6 +15,7 @@ from .sql_helpers import get_task_type
 from .sql_helpers import delete_task_type
 from .sql_helpers import add_task
 from .sql_helpers import update_task
+from .sql_helpers import update_task2
 from .sql_helpers import get_task
 from .sql_helpers import delete_task
 
@@ -462,36 +463,32 @@ def tasks_task_route(url_task_id=None):
 
             return return_response(406, "Request does not contain all the required keys", False, None, data, 406)
 
-    # Adding a new task via PUT method
+    # Updating an existing task via PATCH method.
     elif request.method == "PATCH":
 
-        # Checking required keys (All must be provided for a PATCH, as the sender should have all the data anyway from a previous GET)
-        if ("task" in request_json) and \
-            ("id" in request_json['task']) and \
-            ("type" in request_json['task']) and \
-            ("target" in request_json) and \
-            ("agent" in request_json['target']) and \
-            ("status" in request_json) and \
-            ("status" in request_json['status']) and \
-            ("percentage" in request_json['status']) and \
-            ("timeout" in request_json['status']) and \
-            ("expiration" in request_json) and \
-            ("expired" in request_json['expiration']) and \
-            ("timestamp" in request_json['expiration']) and \
-            ("parameters" in request_json):
+        # Checking required keys. At least the task ID key should be provided, all the rest are optional, but if provided will update the value in the database.
+        if ("task" in request_json) and ("id" in request_json['task']):
 
             logger.debug('Updating task', extra={'request_json':request_json})
             
-            # Copy request_json to task_request so we can properly set the timestamp to a pythonic timestamp
+
             task_request = request_json
-            task_request['expiration']['timestamp'] = datetime.fromtimestamp(request_json['expiration']['timestamp'])
 
-            task_id = update_task(task_request)
-            logger.debug("Updated task in the DB", extra={'task_id':task_id})
+            if ("expiration" in request_json) and ("timestamp" in request_json['expiration']):
+                # If an expiration timestamp has been provided, Copy request_json to task_request so we can properly set the timestamp to a pythonic timestamp
+                task_request['expiration']['timestamp'] = datetime.fromtimestamp(request_json['expiration']['timestamp'])
 
-            if task_id != None:
+            # Get the existing data in the db, so we can only update whats needed
 
-                query_results = get_task(str(task_request['task']['id']))
+            
+
+            updated_task = update_task(task_request)
+
+            logger.debug("Updated task in the DB", extra={'task_updated_taskid':updated_task})
+
+            if updated_task != None:
+
+                query_results = get_task(str(request_json['task']['id']), None, None, None, None, None, None, None, None, None)
 
                 if query_results == False:
                     data = []
@@ -501,7 +498,7 @@ def tasks_task_route(url_task_id=None):
                     return return_response(201, "Updated task successfully", True, None, data, 201)
                 else:
                     data =[]
-                    logger.error("No tasks returned from DB for a ID that was just added", extra={'task_id':task_id, 'query_results':query_results})
+                    logger.error("No tasks returned from DB for a ID that was just added", extra={'updated_task':updated_task, 'query_results':query_results})
                     return return_response(404, "Unable to update task due to an internal error", False, None, data, 404)
             else:
                 data = task_request
@@ -513,7 +510,7 @@ def tasks_task_route(url_task_id=None):
             for key in request_json.keys():
                 data['keys'].append(key)
 
-            return return_response(406, "Request does not contain all the required keys", False, None, data, 406)
+            return return_response(406, "Request does not contain all the required keys. An task.id key is required.", False, None, data, 406)
 
     # Delete task types
     elif request.method == "DELETE":
